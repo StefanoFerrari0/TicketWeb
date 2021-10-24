@@ -1,70 +1,79 @@
-import mongoose from 'mongoose'
+const mongoose = require("mongoose");
+const Batch = require('./batchesModel');
 
 const ticketSchema = new mongoose.Schema({
 
-    BuyDate:{
+    buyDate:{
         type:Date,
         required: true,
         
     },
 
-    Seller:{
+    seller:{
         type:String,
         required: true,
         trim:true,
     },
 
-    Price:{
-        type:Float64Array,
+    price:{
+        type:Number,
         required: true,
         
     },
 
-    Email:{
+    email:{
         type:String,
         required: true,
         trim:true,
     },
     
-    Phone:{
-        type:Float64Array,
+    phone:{
+        type:Number,
         required: true,
         trim:true,
     },
     
-    Name:{
+    name:{
         type:String,
         required: true,
         trim:true,
     },
     
-    LastName:{
+    lastName:{
         type:String,
         required: true,
         trim:true,
     },
     
-    DNI:{
+    dni:{
         type:String,
         required: true,
         trim:true,
-    },
-    
-    Qr?:{
-        type:String,
-        required: true,
-        trim:true,
-    },
-    
-    State:{
-        type:Boolean(true),
-        required: true,
-        
     },
 
-    Batch:{
+    qr?:{
+        type:String,
+        required: true,
+        trim:true,
+    },
+    isDelete:{
+        type: Boolean,
+        default: true,
+        required: false,
+    },
+    state:{
+        type:Boolean,
+        required: true,
+        default: false,
+    },
+    batch:{
         type: mongoose.Schema.Types.ObjectId,
-        ref:"batchesModels"
+        ref:"Batch"
     }
         
+}, 
+{
+  timestamps: true,
 })
+
+export default mongoose.models.ticket || mongoose.model('ticket', ticketSchema)

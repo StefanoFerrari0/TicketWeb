@@ -1,7 +1,7 @@
-import User from "../models/userModel";
-import Cookies from "cookies";
-import Roles from "../models/roleModel";
-import jwt from "jsonwebtoken";
+const User = require("../models/userModel");
+const Cookies = require("cookies");
+const Roles = require("../models/roleModel");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
