@@ -10,6 +10,12 @@
   "author": "Stefano Ferrari",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "cookies": "^0.8.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.11"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.14"
   }
 }
