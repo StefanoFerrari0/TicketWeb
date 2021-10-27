@@ -1,19 +1,7 @@
-const bodyParser = require("body-parser");
-const express = require("express");
-const connectDB = require("./utils/connectDB");
-require("dotenv").config();
+const http = require("http");
 const PORT = process.env.PORT || 3001;
-const app = express();
-var router = express.Router();
+const app = require("./app");
 
-connectDB();
+const server = http.createServer(app);
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
-
-
+server.listen(PORT);

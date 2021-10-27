@@ -1,64 +1,57 @@
-const app = express();
-const express = require('express');
-var mongoose = require("mongoose")
-var User = mongoose.model("userModel")
+var express = require("express");
+var router = express.Router();
+var mongoose = require("mongoose");
+var User = mongoose.model("userModel");
+var UserController = require("../../controllers/user");
 
-app.get("/api/user/:userId",(req,res)=>{
-    let userId   =  req.params.userId
-    User.findbyId(userId,(err,user)=>{
-        if(err) return res.status(500).send({message:`error al realizar la peticion: ${err}`})
-        if(!user) return res.status(404).send({message:`el usuario no existe`})
+//GetById
+router.get("/:userId", (req, res, next) => {
+  let userId = req.params.userId;
 
-        res.status(200).send ({user})
-    })
-    
+  const user = UserController.getUser(userId);
+  res.status(200).send({ ok: true, user });
+
+  /*  User.findbyId(userId, (err, user) => {
+    if (err)
+      return res
+        .status(500)
+        .send({ message: `error al realizar la peticion: ${err}` });
+    if (!user) return res.status(404).send({ message: `el usuario no existe` });
+
+    res.status(200).send({ user });
+  }); */
 });
 
-app.get('/api/user',(req,res)=> {
-
-    User.find({},(err,users)=>{
-        if(err) return res.status(500).send({message:`error al realizar la peticion: ${err}`})
-        if(!users) return res.status(404).send({message:`no existen usuarios`})
-
-        res.status(200).send({users})
-    })
+//GetAll
+router.get("/", (req, res, next) => {
+  let userId = req.params.userId;
+  const users = UserController.getAllUsers(userId);
+  res.status(200).send({ ok: true, users });
 });
 
-app.delete("/api/user/:userId",(req,res)=>{
-
-    let userId =  req.params.userId
-
-    User.findById(userId,(err,user)=>{
-        if(err)res.status(500).send({message:`Error al borrar el usuario:${err}`})
-
-        user.remove(err=>{
-            if(err)res.status(500).send({message:`Error al borrar el usuario:${err}`})
-            res.status(200).send({message:`El usuario fue eliminado`})
-        })
-    })
-
+//DeleteById????
+router.delete("/:userId", (req, res, next) => {
+  let userId = req.params.userId;
+  UserController.deleteUser(userId);
+  res.status(200).send({ ok: true });
 });
 
-app.put("/api/user/:userId",(req,res)=>{
-    let userId=req.params.userId
-    let update = req.body
-    User.findByIdAndUpdate(userId,update, (err,userUpdated) =>{
-        if(err)res.status(500).send({message:`Error al actualizar el usuario:${err}`})
+//Edit
+router.put("/:userId", (req, res, next) => {
+  let data = req.body;
 
-        res.status(200).send({user:userUpdated})
-    })
-})
-app.post("/api/user",(req,res)=>{
-    let user = new User()
-    user.email = req.body.email
-    user.password = req.body.password
-    user.idDelete = req.body.isDelete
-    user.roles =req.body.roles
-    
-    user.save((err,userSaved)=>{
-        if (err)res.status(500).send({message:`error al crear el usuario:${err}`})
+  UserController.editUser(data);
+  res.status(200).send({ ok: true });
+});
 
-        res.status(200).send({user:userSaved})
-    })
+//CreateUser
 
+router.post("/", (req, res, next) => {
+  let user = new User();
+  user.email = req.body.email;
+  user.password = req.body.password;
+  user.roles = req.body.roles;
+
+  UserController.createUser(user);
+  res.status(200).send({ ok: true });
 });

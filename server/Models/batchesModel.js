@@ -33,7 +33,7 @@ const batchesSchema = new mongoose.Schema({
 
   isDelete: {
     type: Boolean,
-    default: true,
+    default: false,
     required: false,
   },
 

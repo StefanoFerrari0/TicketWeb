@@ -58,7 +58,7 @@ const ticketSchema = new mongoose.Schema({
     },
     isDelete:{
         type: Boolean,
-        default: true,
+        default: false,
         required: false,
     },
     state:{
