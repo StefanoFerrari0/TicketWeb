@@ -1,4 +1,4 @@
-import connectDB from "../../utils/connectDB";
+/* import connectDB from "../../utils/connectDB";
 import User from "../../models/userModel";
 import { tokenProtect, isAdmin } from "../../middlewares/auth";
 
@@ -35,3 +35,4 @@ export default async (req, res) => {
       break;
   }
 };
+ */

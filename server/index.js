@@ -1,17 +1,9 @@
-const express = require("express");
-const connectDB = require("./utils/connectDB");
-
-require("dotenv").config();
+const http = require("http");
 const PORT = process.env.PORT || 3001;
+const app = require("./app");
 
-const app = express();
+const server = http.createServer(app);
+const { initializeDB } = require("./config/init");
 
-connectDB();
-
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+initializeDB();
+server.listen(PORT);

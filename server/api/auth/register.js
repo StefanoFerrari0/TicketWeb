@@ -1,4 +1,4 @@
-import connectDB from "../../../utils/connectDB";
+/* import connectDB from "../../../utils/connectDB";
 import User from "../../../models/userModel";
 import jwt from "jsonwebtoken";
 import Role from "../../../models/roleModel";
@@ -58,3 +58,4 @@ const handler = async (req, res) => {
 };
 
 export default handler;
+ */

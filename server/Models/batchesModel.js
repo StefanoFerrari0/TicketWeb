@@ -33,7 +33,7 @@ const batchesSchema = new mongoose.Schema({
 
   isDelete: {
     type: Boolean,
-    default: true,
+    default: false,
     required: false,
   },
 
@@ -43,4 +43,4 @@ const batchesSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.user || mongoose.model("batches", batchesSchema);
+module.exports = mongoose.model("batches", batchesSchema);

@@ -10,6 +10,11 @@ const roleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isDelete: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
 });
 
-export default mongoose.models.role || mongoose.model("role", roleSchema);
+module.exports = mongoose.model("Role", roleSchema);

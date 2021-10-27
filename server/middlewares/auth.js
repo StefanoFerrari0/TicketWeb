@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+/* const User = require("../models/userModel");
 const Cookies = require("cookies");
 const Roles = require("../models/roleModel");
 const jwt = require("jsonwebtoken");
@@ -38,14 +38,14 @@ export const tokenProtect = async (req, res) => {
   }
 };
 
-export const isAdmin = async (req, res) => {
+export const isRole = async (req, res) => {
   const user = await User.findById(req.userId);
 
   const roles = await Roles.find({ _id: { $in: user.roles } });
 
   for (let i = 0; i < roles.length; i++) {
-    if (roles[i].name === "admin") {
-      console.log("Es admin");
+    if (roles[i].name === req.roleUser) {
+      console.log("Es ", roles.roleUser);
       return;
     }
   }
@@ -62,3 +62,4 @@ export const verifyToken = async (token) => {
     return true;
   }
 };
+ */

@@ -15,9 +15,9 @@ const eventSchema = new mongoose.Schema({
 
   isDelete: {
     type: Boolean,
-    default: true,
+    default: false,
     required: false,
   },
 });
 
-export default mongoose.models.event || mongoose.model("event", eventSchema);
+module.exports = mongoose.model("Event", eventSchema);
