@@ -1,10 +1,10 @@
+const bodyParser = require("body-parser");
 const express = require("express");
 const connectDB = require("./utils/connectDB");
-
 require("dotenv").config();
 const PORT = process.env.PORT || 3001;
-
 const app = express();
+var router = express.Router();
 
 connectDB();
 
@@ -15,3 +15,5 @@ app.get("/api", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+
