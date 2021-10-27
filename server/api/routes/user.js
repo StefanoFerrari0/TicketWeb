@@ -1,7 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var mongoose = require("mongoose");
-var User = mongoose.model("userModel");
 var UserController = require("../../controllers/user");
 
 //GetById
@@ -55,3 +53,5 @@ router.post("/", (req, res, next) => {
   UserController.createUser(user);
   res.status(200).send({ ok: true });
 });
+
+module.exports = router;

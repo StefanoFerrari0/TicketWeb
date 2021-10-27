@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var User = mongoose.model("userModel");
+var User = require("../models/userModel");
 
 module.exports = {
   createUser: async ({ email, password, roles }) => {

@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+/* const User = require("../models/userModel");
 const Cookies = require("cookies");
 const Roles = require("../models/roleModel");
 const jwt = require("jsonwebtoken");
@@ -62,3 +62,4 @@ export const verifyToken = async (token) => {
     return true;
   }
 };
+ */

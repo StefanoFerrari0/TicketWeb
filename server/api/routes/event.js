@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
-var Event = mongoose.model("eventModel");
+var Event = require("../../models/eventModel");
 
 //GetById
 router.get("/:ticketId", (req, res) => {
@@ -72,3 +72,5 @@ router.post("/", (req, res) => {
     res.status(200).send({ event: eventSaved });
   });
 });
+
+module.exports = router;

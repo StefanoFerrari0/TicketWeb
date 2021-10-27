@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
-var Batches = mongoose.model("batchesModel");
+var Batches = require("../../models/batchesModel");
 
 //GetById
 router.get("/:batchesId", (req, res) => {
@@ -76,3 +76,5 @@ router.post("/api/batches", (req, res) => {
     res.status(200).send({ event: batchesSaved });
   });
 });
+
+module.exports = router;

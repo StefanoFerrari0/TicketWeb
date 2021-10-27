@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
-var Ticket = mongoose.model("ticketModel");
+var Ticket = require("../../models/ticketModel");
 
 //DeleteById
 
@@ -84,3 +84,5 @@ router.post("/", (req, res) => {
     res.status(200).send({ ticket: ticketSaved });
   });
 });
+
+module.exports = router;
