@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var User = require("../models/userModel");
 
 module.exports = {
-  createUser: async ({ email, password, roles }) => {
+  createUser: async (email, password, roles) => {
     const user = new User({
       _id: new mongoose.Types.ObjectId(),
       email: email,
