@@ -18,13 +18,9 @@ const userRoutes = require("./api/routes/user");
 //Middlewares
 const { isLogin } = require("./middlewares/index");
 
-//Controllers
-var AuthController = require("./controllers/auth");
-
 app.use("/batches", isLogin, batchesRoutes);
 app.use("/event", isLogin, eventRoutes);
 app.use("/ticket", isLogin, ticketRoutes);
 app.use("/user", userRoutes);
-app.use("/login", AuthController.loginUser);
 
 module.exports = app;

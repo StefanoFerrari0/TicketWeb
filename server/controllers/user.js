@@ -1,10 +1,7 @@
-var mongoose = require("mongoose");
-var User = require("../models/userModel");
-var Role = require("../models/roleModel");
-var Cookies = require("cookies");
-
+var UserService = require("../services/user");
 module.exports = {
   createUser: async (req, res, next) => {
+    console.log("createUser");
     try {
       const { email, password, roles, name, surname } = req.body;
 
@@ -13,7 +10,7 @@ module.exports = {
       if (!password) {
       }
 
-      let user = await User.findOne({ email });
+      let user = await UserService.getByEmail(email);
 
       if (user) {
         return next(
@@ -21,21 +18,7 @@ module.exports = {
         );
       }
 
-      const rolesFound = await Role.find({ name: { $in: roles } });
-
-      user = new User({
-        _id: new mongoose.Types.ObjectId(),
-        email,
-        password,
-        name,
-        surname,
-        roles: rolesFound.map((role) => role._id),
-        isDelete: false,
-      });
-
-      user.password = await User.encryptPassword(user.password);
-
-      await user.save();
+      UserService.create(email, password, roles, name, surname);
 
       res.status(201).json({
         ok: true,
@@ -46,11 +29,10 @@ module.exports = {
   },
 
   getUserById: async (req, res, next) => {
+    console.log("getUserById");
     try {
-      console.log("entre");
       const userId = req.params.userId;
-      console.log("userid: ", userId);
-      const user = await User.findById(userId);
+      const user = await UserService.getById(userId);
       if (!user) {
         return next(new Error("El usuario no existe."));
       }
@@ -63,40 +45,24 @@ module.exports = {
     }
   },
 
-  getUserByEmail: async (req, res, next) => {
+  getAllUsers: async (req, res, next) => {
     try {
-      const user = await User.findOne({
-        email: req.body.email,
-        isDelete: false,
-      }).populate("Role");
-
-      if (!user) {
-        return next(
-          new Error("No existe ninguna cuenta asociada a ese email.")
-        );
-      }
-
+      const users = await UserService.getAll();
       res.status(200).json({
         ok: true,
-        user,
+        data: users,
       });
     } catch (error) {
       next(error);
     }
   },
 
-  getAllUsers: async (req, res, next) => {
-    const users = await User.find({ isDelete: false });
-    res.status(200).json({
-      ok: true,
-      data: users,
-    });
-  },
-
   editUser: async (req, res, next) => {
+    console.log("editUser");
     try {
-      const data = req.body.data;
-      const user = await User.findByIdAndUpdate(data._id, data);
+      const data = req.params.userId;
+
+      const user = await UserService.getById(userId);
       if (!user) return next(new Error("El usuario no existe."));
 
       res.status(204).json({
@@ -110,10 +76,8 @@ module.exports = {
   deleteUser: async (req, res, next) => {
     try {
       const userId = req.params.userId;
-      const data = {
-        isDelete: true,
-      };
-      const user = await User.findByIdAndUpdate(userId, { isDelete: true });
+
+      const user = await UserService.delete(userId);
       if (!user) {
         return next(new Error("El usuario no existe."));
       }

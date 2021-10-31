@@ -1,5 +1,5 @@
-var UserController = require("../controllers/user");
 var User = require("../models/userModel");
+var UserService = require("../services/user");
 var jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
 
@@ -8,16 +8,13 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      let user = await UserController.getUserByEmail(email);
+      const user = await UserService.getByEmail(email);
 
       if (!user) {
-        return next(new Error("El email no existe"));
+        throw new Error("No existe ninguna cuenta asociada a ese email.");
       }
 
-      const matchPassword = await User.comparePassword(
-        req.body.password,
-        user.password
-      );
+      const matchPassword = await User.comparePassword(password, user.password);
 
       if (!matchPassword) {
         return next(new Error("La contraseña es incorrecta."));
@@ -28,12 +25,13 @@ module.exports = {
       });
 
       user.accessToken = token;
+
       const data = user;
-      await UserController.editUser(data);
+      await UserService.edit(data);
 
       res.cookie("accessToken", token, {
-        //Cambiarlo en produccion a true al httpOnly
-        expires: 86400,
+        expires: new Date(Date.now() + 86400000),
+        //Cambiarlo en produccion a true
         httpOnly: false,
         sameSite: "lax",
       });
@@ -42,7 +40,7 @@ module.exports = {
         ok: true,
         data: {
           email: user.email,
-          role: user.role,
+          roles: user.roles,
         },
         token,
       });
