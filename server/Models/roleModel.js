@@ -6,10 +6,6 @@ const roleSchema = new mongoose.Schema({
     trim: true,
     unique: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
   isDelete: {
     type: Boolean,
     default: false,

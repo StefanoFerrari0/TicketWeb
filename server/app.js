@@ -1,7 +1,13 @@
+//Servidor
+var cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
-const config = require("./config/init");
+const { cors } = require("./config/init");
+
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors);
 
 //routes
 const batchesRoutes = require("./api/routes/batches");
@@ -9,14 +15,16 @@ const eventRoutes = require("./api/routes/event");
 const ticketRoutes = require("./api/routes/ticket");
 const userRoutes = require("./api/routes/user");
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+//Middlewares
+const { isLogin } = require("./middlewares/index");
 
-app.use(config.cors);
+//Controllers
+var AuthController = require("./controllers/auth");
 
-app.use("/batches", batchesRoutes);
-app.use("/event", eventRoutes);
-app.use("/ticket", ticketRoutes);
+app.use("/batches", isLogin, batchesRoutes);
+app.use("/event", isLogin, eventRoutes);
+app.use("/ticket", isLogin, ticketRoutes);
 app.use("/user", userRoutes);
+app.use("/login", AuthController.loginUser);
 
 module.exports = app;

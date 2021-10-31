@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 var Event = require("../../models/eventModel");
 
 //GetById
-router.get("/:ticketId", (req, res) => {
+router.get("/:eventId", (req, res) => {
   let eventId = req.params.eventId;
   Event.findbyId(eventId, (err, event) => {
     if (err)
@@ -31,7 +31,7 @@ router.get("/", (req, res) => {
 });
 
 //Delete
-router.delete("/:ticketId", (req, res) => {
+router.delete("/:eventId", (req, res) => {
   let eventId = req.params.eventId;
 
   Event.findById(eventId, (err, event) => {
@@ -47,7 +47,7 @@ router.delete("/:ticketId", (req, res) => {
 });
 
 //Edit
-router.put("/:ticketId", (req, res) => {
+router.put("/:eventId", (req, res) => {
   let eventId = req.params.eventId;
   let update = req.body;
   Event.findByIdAndUpdate(eventId, update, (err, eventUpdated) => {
