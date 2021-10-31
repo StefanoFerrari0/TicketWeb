@@ -12,16 +12,27 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
+    surname: {
+      type: String,
+      required: true,
+    },
+    accessToken: {
+      type: String,
+    },
     roles: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "role",
+        type: mongoose.Types.ObjectId,
+        ref: "Role",
       },
     ],
     isDelete: {
       type: Boolean,
       default: false,
-      required: false,
+      required: true,
     },
   },
   {

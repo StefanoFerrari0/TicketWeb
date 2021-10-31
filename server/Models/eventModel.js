@@ -16,7 +16,11 @@ const eventSchema = new mongoose.Schema({
   isDelete: {
     type: Boolean,
     default: false,
-    required: false,
+    required: true,
+  },
+  batches: {
+    type: mongoose.Types.ObjectId,
+    ref: "Batches",
   },
 });
 

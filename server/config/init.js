@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { MONGODB_URL } = require("./index");
-var express = require("express");
+const Role = require("../models/roleModel");
+const User = require("../models/userModel");
+const UserController = require("../controllers/user");
 
 module.exports = {
   initializeDB: async () => {
@@ -9,6 +11,7 @@ module.exports = {
       useUnifiedTopology: true,
     });
     mongoose.Promise = global.Promise;
+    console.log("Conectado a la base de datos");
   },
 
   cors: async (req, res, next) => {

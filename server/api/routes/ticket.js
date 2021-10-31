@@ -4,7 +4,6 @@ var mongoose = require("mongoose");
 var Ticket = require("../../models/ticketModel");
 
 //DeleteById
-
 router.get("/:ticketId", (req, res) => {
   let ticketId = req.params.ticketId;
   Ticket.findbyId(ticketId, (err, ticket) => {

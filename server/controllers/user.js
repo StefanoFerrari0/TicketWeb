@@ -1,72 +1,128 @@
 var mongoose = require("mongoose");
 var User = require("../models/userModel");
+var Role = require("../models/roleModel");
+var Cookies = require("cookies");
 
 module.exports = {
-  createUser: async (email, password, roles) => {
-    const user = new User({
-      _id: new mongoose.Types.ObjectId(),
-      email: email,
-      password: password,
-      roles: roles,
-      isDelete: false,
-    });
+  createUser: async (req, res, next) => {
     try {
-      const newUser = await user.save();
-      return newUser;
+      const { email, password, roles, name, surname } = req.body;
+
+      /*    dentro del if hacer que saque algunos datos del nombre y 
+      algunos del apellido y generarle una contraseña en base a eso. */
+      if (!password) {
+      }
+
+      let user = await User.findOne({ email });
+
+      if (user) {
+        return next(
+          new Error("Ya existe un usuario registrado con ese nombre")
+        );
+      }
+
+      const rolesFound = await Role.find({ name: { $in: roles } });
+
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        email,
+        password,
+        name,
+        surname,
+        roles: rolesFound.map((role) => role._id),
+        isDelete: false,
+      });
+
+      user.password = await User.encryptPassword(user.password);
+
+      await user.save();
+
+      res.status(201).json({
+        ok: true,
+      });
     } catch (error) {
-      throw error;
+      next(error);
     }
   },
 
-  getUser: async (userId) => {
+  getUserById: async (req, res, next) => {
     try {
+      console.log("entre");
+      const userId = req.params.userId;
+      console.log("userid: ", userId);
       const user = await User.findById(userId);
       if (!user) {
-        throw new Error("El usuario no existe");
+        return next(new Error("El usuario no existe."));
       }
-
-      return user;
+      res.status(200).json({
+        ok: true,
+        user,
+      });
     } catch (error) {
-      throw error;
+      next(error);
     }
   },
 
-  getAllUsers: async () => {
+  getUserByEmail: async (req, res, next) => {
     try {
-      const users = await User.find({});
+      const user = await User.findOne({
+        email: req.body.email,
+        isDelete: false,
+      }).populate("Role");
+
       if (!user) {
-        throw new Error("El usuario no existe");
+        return next(
+          new Error("No existe ninguna cuenta asociada a ese email.")
+        );
       }
 
-      return users;
+      res.status(200).json({
+        ok: true,
+        user,
+      });
     } catch (error) {
-      throw error;
+      next(error);
     }
   },
 
-  deleteUser: async (userId) => {
+  getAllUsers: async (req, res, next) => {
+    const users = await User.find({ isDelete: false });
+    res.status(200).json({
+      ok: true,
+      data: users,
+    });
+  },
+
+  editUser: async (req, res, next) => {
     try {
+      const data = req.body.data;
+      const user = await User.findByIdAndUpdate(data._id, data);
+      if (!user) return next(new Error("El usuario no existe."));
+
+      res.status(204).json({
+        ok: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteUser: async (req, res, next) => {
+    try {
+      const userId = req.params.userId;
+      const data = {
+        isDelete: true,
+      };
       const user = await User.findByIdAndUpdate(userId, { isDelete: true });
       if (!user) {
-        throw new Error("El usuario no existe");
+        return next(new Error("El usuario no existe."));
       }
 
-      return true;
+      res.status(204).json({
+        ok: true,
+      });
     } catch (error) {
-      throw error;
-    }
-  },
-
-  editUser: async (data) => {
-    try {
-      const user = await User.findByIdAndUpdate(data._id, data);
-      if (!user) {
-        throw new Error("El usuario no existe");
-      }
-
-      return true;
-    } catch (error) {
-      throw error;
+      next(error);
     }
   },
 };

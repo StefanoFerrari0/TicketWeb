@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Event = require("./eventModel");
 
 const batchesSchema = new mongoose.Schema({
   name: {
@@ -27,14 +26,14 @@ const batchesSchema = new mongoose.Schema({
   },
 
   event: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "Event",
   },
 
   isDelete: {
     type: Boolean,
     default: false,
-    required: false,
+    required: true,
   },
 
   quantity: {
@@ -43,4 +42,4 @@ const batchesSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("batches", batchesSchema);
+module.exports = mongoose.model("Batches", batchesSchema);

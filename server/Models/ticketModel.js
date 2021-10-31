@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Batch = require("./batchesModel");
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -57,7 +56,7 @@ const ticketSchema = new mongoose.Schema(
     isDelete: {
       type: Boolean,
       default: false,
-      required: false,
+      required: true,
     },
     state: {
       type: Boolean,
@@ -65,7 +64,7 @@ const ticketSchema = new mongoose.Schema(
       default: false,
     },
     batch: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "Batch",
     },
   },
