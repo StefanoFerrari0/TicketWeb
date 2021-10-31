@@ -60,7 +60,7 @@ module.exports = {
   editUser: async (req, res, next) => {
     console.log("editUser");
     try {
-      const data = req.params.userId;
+      const userId = req.params.userId;
 
       const user = await UserService.getById(userId);
       if (!user) return next(new Error("El usuario no existe."));
