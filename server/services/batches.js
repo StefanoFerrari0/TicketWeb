@@ -20,13 +20,13 @@ module.exports = {
           events:eventFound.map((event)=>event._id),
           isDelete:false,
         });
-        await batch.save();
+        await newbatch.save();
         return newbatch;
   },
   
   
   getById: async (batchId) => {
-        const batch = await batch.findById(batchId);
+        const batch = await Batch.findById(batchId);
         return batch;
   },
 

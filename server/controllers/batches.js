@@ -10,7 +10,7 @@ module.exports = {
     try {
         const {name, dateFrom, dateTo,price,events,quantity} = req.body;
         
-        batchService.create(name, dateFrom, dateTo,price,events,quantity)
+        batchService.create(name, dateFrom, dateTo,price,events,quantity);
         res.status(201).json({
           ok:true,
         });
@@ -27,9 +27,9 @@ module.exports = {
       const batch = await batchService.getById(batchId);
 
       if(!batch){
-        return next(new Error("la tanda no existe"))
+        return next(new Error("La tanda no existe."));
       }
-      re.status(201).json({
+      res.status(201).json({
         ok:true,
         batch,
       });
@@ -44,9 +44,9 @@ module.exports = {
       res.status(200).json({
         ok:true,
         data:batch,
-      })
+      });
       if (!batch) {
-        throw new Error("No existen tandas");
+        return next( new Error("No existen tandas"));
       }
     } catch (error) {
       next(error);
@@ -75,11 +75,12 @@ module.exports = {
       const batch = await batchService.edit(batchId);
 
       if (!batch) {
-        throw new Error("La tanda no existe");
+        return next( new Error("La tanda no existe"));
       }
 
       res.status(204).json({
         ok:true,
+        batch
       });
     } catch (error) {
       next(error);
