@@ -12,13 +12,14 @@ module.exports={
         const event = eventService.create(name,date);
         res.status(201).json({
           ok:true,
+          event
         });
     }catch(error){
       next(error);
     }
   },
      getAllEvents: async(req,res,next)=>{
-       console.log("getAllEvents")
+       console.log("getAllEvents");
       try{
           const events = await eventService.getAll();
           res.status(200).json({
@@ -36,7 +37,7 @@ module.exports={
     console.log("getEventId")
     try {
       const eventId=req.params.eventId;
-      const event = await eventService.getId(eventId)
+      const event = await eventService.getId(eventId);
       if(!event){
         return next(new Error("No se encontro el evento."))
       }
@@ -63,14 +64,14 @@ module.exports={
            event,
          });
       } catch(error) {
-        next(error)
+        next(error);
       }
   },
  deleteEvent: async(req,res,next)=>{
    try {
-     const eventId= req.params.eventId
+     const eventId= req.params.eventId;
      
-     const event = await eventService.delete(eventId)
+     const event = await eventService.delete(eventId);
      if(!event){
        return next( new Error("El evento no existe."))
      }
@@ -83,9 +84,9 @@ module.exports={
   editEvent: async (req,res,next)=>{
     try{
       const data = req.body.data;
-      const event = await eventService.edit(data)
-      if(!event) return next(new Error("el usuario no existe"))
-      res.status(204).json({ok:true});
+      const event = await eventService.edit(data);
+      if(!event) return next(new Error("el usuario no existe"));
+      res.status(204).json({ok:true,event});
     }catch (error){
       next(error);
     }

@@ -30,7 +30,7 @@ module.exports = {
         return batch;
   },
 
-  getAll: async (req,res,next) => {
+  getAll: async () => {
     
       const batch = await Batch.find({isDelete:false});
       console.log("batches")

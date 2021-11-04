@@ -6,7 +6,7 @@ var batchService = require("../services/batches")
 module.exports = {
   
   createBatch : async (req,res,next)=>{
-    console.log("createBranch")  
+    console.log("createBranch")  ;
     try {
         const {name, dateFrom, dateTo,price,events,quantity} = req.body;
         
@@ -21,7 +21,7 @@ module.exports = {
   
   
   getBatchById: async (req,res,next) => {
-    console.log("getUserId")
+    console.log("getUserId");
     try {
       const batchId =req.params.batchId;
       const batch = await batchService.getById(batchId);

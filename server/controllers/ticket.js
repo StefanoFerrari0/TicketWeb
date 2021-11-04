@@ -7,17 +7,28 @@ var ticketService = require("../services/batches")
 module.exports={
 
     createTicket:async(req,res,next)=>{
-
+       console.log("createTickeck");
+       try {
+           const{buyDate,seller,price,email,phone,name,lastName,dni,state}= req.body;
+           const ticket = ticketService.createTicket(buyDate,seller,price,email,phone,name,lastName,dni,state);
+           const email= ticketService.sendEmail(ticketId,email);
+           res.status(201).json({
+               ok:true,
+               ticket
+           });
+       } catch (error) {
+           next(error);
+       }
     },
 
     getTicketById:async(req,res,next)=>{
-        console.log("getTicketId")
+        console.log("getTicketId");
         try {
             const ticketId = req.params.ticketId;
             const ticket =await ticketService.getById(ticketId);
 
             if(!ticket){
-                return next(new Error("No se encontro el ticket."))
+                return next(new Error("No se encontro el ticket."));
             }
             res.status(201).json({
                 ok:true,
@@ -46,7 +57,7 @@ module.exports={
             const ticket = await ticketService.edit(ticketId);
 
             if(!ticket){
-                return next(new Error("No existe el ticket"))
+                return next(new Error("No existe el ticket"));
             }
         } catch (error) {
           next(error);
