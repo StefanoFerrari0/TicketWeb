@@ -1,0 +1,20 @@
+.loading {
+  display: flex;
+  align-items: center;
+  width: 10rem;
+  justify-content: center;
+  background-color: black;
+}
+
+.pulse {
+  display: inline-block;
+  position: relative;
+  height: 3rem;
+  width: 3rem;
+  background-color: 5rem;
+  border-radius: 50%;
+  margin: 0 0.5rem;
+  animation: pulse 3s infinite;
+  animation-delay: (3s / 3);
+  border-color: white;
+}
