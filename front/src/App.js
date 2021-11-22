@@ -22,10 +22,11 @@ function App() {
         <Switch>
           <PrivateRoute path="/" exact component={Home} />
           <Route path="/login" exact component={Login} />
-          <PrivateRoute path="/dashboard/lectorqr" exact component={QrReader} />
-          <PrivateRoute path="/dashboard/eventos" exact component={EventDashboard} />
-          <PrivateRoute path="/dashboard/tandas" exact component={BatchesDashboard} />
-          <PrivateRoute path="/dashboard/usuarios"  exact component={UserDashboard} />
+          <PrivateRoute path="/dashboard" exact component={Home} />
+          <PrivateRoute path="/dashboard/lectorqr" role="qr" exact component={QrReader} />
+          <PrivateRoute path="/dashboard/eventos" exact role="admin" component={EventDashboard} />
+          <PrivateRoute path="/dashboard/tandas" exact role="admin" component={BatchesDashboard} />
+          <PrivateRoute path="/dashboard/usuarios" exact role="admin"component={UserDashboard} />
         </Switch>
       </UserContext.Provider>
     </BrowserRouter>

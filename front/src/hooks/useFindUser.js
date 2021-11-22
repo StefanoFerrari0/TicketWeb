@@ -6,25 +6,23 @@ export default function useFindUser() {
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     async function findUser() {
-      const cookie = Cookies.get('accessToken')
+      const cookie = Cookies.get('accessToken');
       if (cookie) {
-        const accessToken = cookie;
 
         const options = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: accessToken,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
         };
-        await fetch("api/auth/verifyToken", options)
-          .then((res) => {
-            if (res.ok) {
-              setUser(res.data);
-              setLoading(false);
+
+        fetch('/api/auth/verifyToken', options)
+          .then(response => response.json())
+          .then(res => {  
+
+            if(res.ok){
+              setUser(res.data)
+              setLoading(false)
             }
-          })
-          .catch((err) => {
+          }).catch((err) => {
             setLoading(false);
           });
       }
