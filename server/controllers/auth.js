@@ -1,10 +1,11 @@
-var User = require("../models/userModel");
-var UserService = require("../services/user");
-var jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
+const UserService = require("../services/user");
+const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
 
 module.exports = {
   loginUser: async (req, res, next) => {
+    console.log("LoginUser");
     try {
       const { email, password } = req.body;
 
@@ -40,9 +41,59 @@ module.exports = {
         ok: true,
         data: {
           email: user.email,
+          name: user.name,
           roles: user.roles,
+          token,
         },
-        token,
+
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  verifyToken: async (req, res, next) => {
+    console.log("VerifyToken");
+    try {
+      const accessToken  = req.cookies.accessToken;
+
+      if(!accessToken){
+        next(new Error(`El token está vacio`));
+      }
+
+      const { id, exp } = jwt.verify(accessToken, TOKEN_SECRET);
+
+      if (!id) {
+        next(new Error(`Token inválido.`));
+      }
+      const userId = id;
+      const userLogged = await UserService.getById(userId);
+
+      if (!userLogged) {
+        next(new Error(`Usuario no encontrado.`));
+      }
+
+      // Si el token expiró
+      if (exp < Date.now().valueOf() / 1000) {
+        res.clearCookie("accessToken");
+        next(
+          new Error(
+            `"JWT token ha expirado, por favor inicie sesión para obtener uno nuevo."`
+          )
+        );
+      }
+
+      console.log("isLogin - userLogged ID: ", userLogged._id);
+      res.locals.userLogged = userLogged;
+      req.userLogged = userLogged;
+
+      res.status(201).json({
+        ok: true,
+        data: {
+          email: userLogged.email,
+          name: userLogged.name,
+          roles: userLogged.roles,
+        },
       });
     } catch (error) {
       next(error);
