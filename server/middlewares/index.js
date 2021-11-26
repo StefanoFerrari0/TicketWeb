@@ -1,6 +1,9 @@
 const UserController = require("../controllers/user");
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
+const jwt = require("jsonwebtoken");
+const { TOKEN_SECRET } = require("../config/index");
+const {getById} = require("../services/user")
 
 module.exports = {
   isRole: function (name) {
@@ -32,7 +35,7 @@ module.exports = {
         const accessToken = req.cookies.accessToken;
         const { id, exp } = await jwt.verify(accessToken, TOKEN_SECRET);
 
-        const userLogged = await getUserById(id);
+        const userLogged = await getById(id);
 
         if (!userLogged) {
           next(new Error(`Usuario no encontrado.`));

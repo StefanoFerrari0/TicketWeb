@@ -4,11 +4,8 @@ const { findOne } = require("../models/eventModel");
 var Event = require("../models/eventModel")
 module.exports = {
   
-  create : async (name, dateFrom, dateTo,price,events,quantity)=>{
+  create : async (name, dateFrom, dateTo,price,quantity)=>{
       
-        const {name, dateFrom, dateTo,price,events,quantity}
-        
-        const eventFound = await Event.find({name:{$in:events}})
         
         let newbatch = new  Batch({
           _id: new mongoose.Types.ObjectId(),
@@ -17,7 +14,6 @@ module.exports = {
           dateTo,
           price,
           quantity,
-          events:eventFound.map((event)=>event._id),
           isDelete:false,
         });
         await newbatch.save();

@@ -1,17 +1,13 @@
-var mongoose = requiere ("mongoose")
-var Ticket = require("../models/ticketModel")
-var Event = require("../models/eventModel")
-var Batch = require("../models/batchesModel")
-var ticketService = require("../services/batches")
-
+const ticketService = require("../services/ticket");
+const emailService = require("../services/email");
 module.exports={
 
     createTicket:async(req,res,next)=>{
        console.log("createTickeck");
        try {
-           const{buyDate,seller,price,email,phone,name,lastName,dni,state}= req.body;
-           const ticket = ticketService.createTicket(buyDate,seller,price,email,phone,name,lastName,dni,state);
-           const email= ticketService.sendEmail(ticketId,email);
+           const{buyDate,seller,price,email,phone,name,lastName,dni,state,qr}= req.body;
+           const ticket = ticketService.createTicket(buyDate,seller,price,email,phone,name,lastName,dni,state,qr);
+           /*const emailFound= emailService.sendEmail(ticket._id,email);*/
            res.status(201).json({
                ok:true,
                ticket
@@ -53,7 +49,7 @@ module.exports={
 
     editTicket:async(req,res,next)=>{
         try {
-            const ticketId= req.body.ticketId;
+            const ticketId= req.params.ticketId;
             const ticket = await ticketService.edit(ticketId);
 
             if(!ticket){
@@ -65,7 +61,7 @@ module.exports={
     },
     deleteTicket:async(req,res,next)=>{
         try {
-            const ticketId=req.body.ticketId;
+            const ticketId=req.params.ticketId;
             const ticket = await ticketService.delete(ticketId);
             if(!ticket){
                 return next(new Error("no existe el ticket"));

@@ -3,13 +3,13 @@ var Batch = require("../models/batchesModel")
 var Event = require("../models/eventModel")
 var Ticket =require("../models/ticketModel")
 const dotenv = require("dotenv");
-const { getTicketById } = require("../controllers/ticket");
+
 module.exports={
 
-    createTicket: async(buyDate,seller,price,email,phone,name,lastName,dni,batches,events)=>{
+    createTicket: async(buyDate,seller,price,email,phone,name,lastName,dni,batches,events,qr)=>{
         
-        const batchesFound = await Batch.find({name:$batches})
-        const eventsFound = await Event.find({name:$events})
+        const batchesFound = await Batch.find({name:{$in:batches}})
+        const eventsFound = await Event.find({name:{$in:events}})
         
         
         let newTicket = new Ticket ({
@@ -22,14 +22,15 @@ module.exports={
             name,
             lastName,
             dni,
+            qr,
             state:true,
             batches:batchesFound.map((batches)=>batches._id),
             events:eventsFound.map((events)=>events._id),
             isDeleted:false
         });
 
-        
-        await newTickect.save();
+        newTicket.email.trim;  
+        await newTicket.save();
         return newTicket;
     },
 
@@ -51,40 +52,4 @@ module.exports={
         return ticket;
     },
 
-    sendEmail:async(email,ticketId)=>{
-            
-        
-        let testAccount = await nodemailer.createTestAccount();
-        let ticket = await getTicketById()
-        
-
-            // el email de las 10hs y su config
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                /*user: process.env.EMAIL, // generated ethereal user
-                pass: process.env.EMAILPASS, // generated ethereal password*/
-                user: 'gina.cormier44@ethereal.email',
-                pass: 'WVzCdVGKNKqhbADYD7'
-                },
-            });
-
-            // send mail with defined transport object
-        let info = await transporter.sendMail({
-                from: '"10 horas tecno 👻" <10horastecno@gmail.com>', // sender address
-                to: ticket.email, // list of receivers
-                subject: "Tu entrada para las 10hs.", // Subject line
-                text: "Hello world?", // plain text body
-                html: "<b>Hello world?</b>", // html body
-            });
-
-        console.log("Message sent: %s", info.messageId);
-            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-            // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-            // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-    },
 }

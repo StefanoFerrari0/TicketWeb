@@ -4,17 +4,17 @@ var mongoose = require("mongoose");
 var BatchesController = require("../../controllers/batches");
 
 //GetById
-router.get("/:batchesId", BatchesController.getBatchById);
+router.get("/:batchId", BatchesController.getBatchById);
 
 //GetAll
-router.get("/api/batches",BatchesController.getAllBatches );
+router.get("/",BatchesController.getAllBatches);
 
 //Delete
-router.delete("/:batchesId",BatchesController.deleteBatch ); 
+router.put("/:batchesId",BatchesController.deleteBatch ); 
 //Edit
-router.put("/:batchesId",BatchesController.editBatch); 
+router.put("/edit/:batchesId",BatchesController.editBatch); 
 
 //Create
-router.post("/api/batches",BatchesController.createBatch ); 
+router.post("/",BatchesController.createBatch ); 
 
 module.exports = router;

@@ -19,7 +19,7 @@ const ticketSchema = new mongoose.Schema(
     },
 
     email: {
-      type: String,
+      type:String,
       required: true,
       trim: true,
     },
@@ -50,7 +50,7 @@ const ticketSchema = new mongoose.Schema(
 
     qr: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
     },
     isDelete: {
@@ -67,6 +67,10 @@ const ticketSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Batch",
     },
+    event:{
+      type:mongoose.Types.ObjectId,
+      ref:"Event"
+    }
   },
   {
     timestamps: true,

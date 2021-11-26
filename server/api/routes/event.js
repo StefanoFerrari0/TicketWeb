@@ -3,18 +3,19 @@ var router = express.Router();
 var EventController = require("../../controllers/event");
 const Middlewares = require("../../middlewares/index")
 //GetById
-router.get("/:eventtId", EventController.getEventId );
+router.get("/:eventId", EventController.getEventId );
 
 //GetAll
 router.get("/", EventController.getAllEvents );
   
 //Delete
-router.delete("/:eventId",Middlewares.isRole("admin"), EventController.deleteEvent);
+router.put("/delete/:eventId", EventController.deleteEvent);
   
 
 //Edit
-router.put("/:eventId", EventController.editEvent );
+router.put("/edit/:eventId", EventController.editEvent );
   
 //Add
 router.post("/", EventController.createEvent );
-  
+
+module.exports = router;

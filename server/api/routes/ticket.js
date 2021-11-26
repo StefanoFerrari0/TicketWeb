@@ -2,20 +2,20 @@ var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
 var Ticket = require("../../models/ticketModel");
-
-//DeleteById
-router.get("/:ticketId", );
+var ticketController = require("../../controllers/ticket")
+//getById
+router.get("/:ticketId",ticketController.getTicketById );
 
 //GetAll
-router.get("/api/ticket",);
+router.get("/",ticketController.getAllTickets);
 
 //Delete
-router.delete("/:ticketId",);
+router.put("/delete/:ticketId",ticketController.deleteTicket);
 
 //Update
-router.put("/api/ticket/:ticketId",);
+router.put("/edit/:ticketId",ticketController.editTicket);
 
 //Create
-router.post("/", );
+router.post("/",ticketController.createTicket );
 
 module.exports = router;

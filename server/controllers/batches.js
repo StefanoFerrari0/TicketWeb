@@ -1,18 +1,18 @@
 var mongoose = require("mongoose");
 var Batch = require("../models/batchesModel");
 const { findOne } = require("../models/eventModel");
-var Event = require("../models/eventModel")
 var batchService = require("../services/batches")
 module.exports = {
   
   createBatch : async (req,res,next)=>{
     console.log("createBranch")  ;
     try {
-        const {name, dateFrom, dateTo,price,events,quantity} = req.body;
+        const {name, dateFrom, dateTo,price,quantity} = req.body;
         
-        batchService.create(name, dateFrom, dateTo,price,events,quantity);
+        const batch =batchService.create(name, dateFrom, dateTo,price,quantity);
         res.status(201).json({
           ok:true,
+          batch
         });
       } catch (error) {
         next(error);  
@@ -21,7 +21,6 @@ module.exports = {
   
   
   getBatchById: async (req,res,next) => {
-    console.log("getUserId");
     try {
       const batchId =req.params.batchId;
       const batch = await batchService.getById(batchId);
@@ -55,8 +54,8 @@ module.exports = {
 
   deleteBatch: async (req,res,next) => {
     try {
-      const batchId = req.body.batchId;
-      const batch = await batchService.delete(batchId);
+      const batchesId = req.params.batchesId;
+      const batch = await batchService.delete(batchesId);
       if (!batch) {
         throw new Error("La tanda no existe");
       }
@@ -71,7 +70,7 @@ module.exports = {
 
   editBatch: async (res,req,next) => {
     try {
-      const batchId = req.body.batchId;
+      const batchId = req.params.batchId;
       const batch = await batchService.edit(batchId);
 
       if (!batch) {
@@ -83,7 +82,7 @@ module.exports = {
         batch
       });
     } catch (error) {
-      next(error);
+      next(console.log(error));
     }
   },
 };

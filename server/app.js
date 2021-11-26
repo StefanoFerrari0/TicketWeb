@@ -18,7 +18,7 @@ const userRoutes = require("./api/routes/user");
 //Middlewares
 const { isLogin } = require("./middlewares/index");
 
-app.use("/batches", isLogin, batchesRoutes);
+app.use("/batches", isLogin,batchesRoutes);
 app.use("/event", isLogin, eventRoutes);
 app.use("/ticket", isLogin, ticketRoutes);
 app.use("/user", userRoutes);

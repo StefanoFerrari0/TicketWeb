@@ -17,7 +17,7 @@ module.exports = {
       isDelete: false,
     });
 
-    newUser.password = await User.encryptPassword(user.password);
+    newUser.password = await User.encryptPassword(newUser.password);
 
     await newUser.save();
     return newUser;
