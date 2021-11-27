@@ -1,21 +1,20 @@
-var express = require("express");
-var router = express.Router();
-var mongoose = require("mongoose");
-var Ticket = require("../../models/ticketModel");
-var ticketController = require("../../controllers/ticket")
-//getById
-router.get("/:ticketId",ticketController.getTicketById );
-
-//GetAll
-router.get("/",ticketController.getAllTickets);
-
-//Delete
-router.put("/delete/:ticketId",ticketController.deleteTicket);
-
-//Update
-router.put("/edit/:ticketId",ticketController.editTicket);
+const express = require("express");
+const router = express.Router();
+const TicketController = require("../../controllers/ticket")
 
 //Create
-router.post("/",ticketController.createTicket );
+router.post("/", TicketController.createTicket );
+
+//getById
+router.get("/:ticketId", TicketController.getTicketById );
+
+//GetAll
+router.get("/", TicketController.getAllTickets);
+
+//Edit
+router.put("/edit/:ticketId", TicketController.editTicket);
+
+//Delete
+router.put("/delete/:ticketId", TicketController.deleteTicket);
 
 module.exports = router;

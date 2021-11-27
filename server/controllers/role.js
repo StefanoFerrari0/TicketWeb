@@ -1,5 +1,5 @@
-var mongoose = require("mongoose");
-var Role = require("../models/roleModel");
+const mongoose = require("mongoose");
+const Role = require("../models/roleModel");
 
 module.exports = {
   createRol: async (req, res, next) => {
@@ -18,7 +18,7 @@ module.exports = {
       });
 
       await role.save();
-      res.status(201).json({
+      res.status(200).json({
         ok: true,
       });
     } catch (error) {

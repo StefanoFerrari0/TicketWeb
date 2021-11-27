@@ -1,21 +1,21 @@
-var express = require("express");
-var router = express.Router();
-var EventController = require("../../controllers/event");
-const Middlewares = require("../../middlewares/index")
+const express = require("express");
+const router = express.Router();
+const EventController = require("../../controllers/event");
+
+//Create
+router.post("/", EventController.createEvent);
+
 //GetById
-router.get("/:eventId", EventController.getEventId );
+router.get("/:eventId", EventController.getEventId);
 
 //GetAll
-router.get("/", EventController.getAllEvents );
-  
+router.get("/", EventController.getAllEvents);
+
+//Edit FALTA
+
+
 //Delete
 router.put("/delete/:eventId", EventController.deleteEvent);
-  
 
-//Edit
-router.put("/edit/:eventId", EventController.editEvent );
-  
-//Add
-router.post("/", EventController.createEvent );
 
 module.exports = router;

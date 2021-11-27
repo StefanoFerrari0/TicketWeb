@@ -30,19 +30,18 @@ module.exports = {
     }
     next();
   },
-   // el email de las 10hs y su config
-  emailAddress:async(req,res,next)=>{
+  // el email de las 10hs y su config
+  emailAddress: async (req, res, next) => {
     nodemailer.createTransport({
-   host: "smtp.gmail.com",
-   port: 587,
-   secure: false, // true for 465, false for other ports
-   auth: {
-   /*user: process.env.EMAIL, // generated ethereal user
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        /*user: process.env.EMAIL, // generated ethereal user
    pass: process.env.EMAILPASS, // generated ethereal password*/
-   user: 'gina.cormier44@ethereal.email',
-   pass: 'WVzCdVGKNKqhbADYD7'
-   }
-    })
+        user: "gina.cormier44@ethereal.email",
+        pass: "WVzCdVGKNKqhbADYD7",
+      },
+    });
   },
-
 };

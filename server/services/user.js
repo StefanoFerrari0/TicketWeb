@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
-var User = require("../models/userModel");
-var Role = require("../models/roleModel");
+const mongoose = require("mongoose");
+const User = require("../models/userModel");
+const Role = require("../models/roleModel");
 
 module.exports = {
   create: async (email, password, roles, name, surname) => {

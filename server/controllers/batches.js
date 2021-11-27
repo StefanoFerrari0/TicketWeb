@@ -1,35 +1,20 @@
-var mongoose = require("mongoose");
-var Batch = require("../models/batchesModel");
-const { findOne } = require("../models/eventModel");
-var batchService = require("../services/batches")
-module.exports = {
-  
-  createBatch : async (req,res,next)=>{
-    console.log("createBranch")  ;
-    try {
-        const {name, dateFrom, dateTo,price,quantity} = req.body;
-        
-        const batch =batchService.create(name, dateFrom, dateTo,price,quantity);
-        res.status(201).json({
-          ok:true,
-          batch
-        });
-      } catch (error) {
-        next(error);  
-      }
-  },
-  
-  
-  getBatchById: async (req,res,next) => {
-    try {
-      const batchId =req.params.batchId;
-      const batch = await batchService.getById(batchId);
+const BatchService = require("../services/batches");
 
-      if(!batch){
-        return next(new Error("La tanda no existe."));
-      }
-      res.status(201).json({
-        ok:true,
+module.exports = {
+  createBatch: async (req, res, next) => {
+    console.log("createBatch");
+    try {
+      const { name, dateFrom, dateTo, price, quantity } = req.body;
+
+      const batch = BatchService.create(
+        name,
+        dateFrom,
+        dateTo,
+        price,
+        quantity
+      );
+      res.status(200).json({
+        ok: true,
         batch,
       });
     } catch (error) {
@@ -37,52 +22,74 @@ module.exports = {
     }
   },
 
-  getAllBatches: async (req,res,next) => {
+  getBatchById: async (req, res, next) => {
+    console.log("getBatchById");
     try {
-      const batch = await batchService.getAll();
-      res.status(200).json({
-        ok:true,
-        data:batch,
-      });
+      const batchId = req.params.batchId;
+      const batch = await BatchService.getById(batchId);
+
       if (!batch) {
-        return next( new Error("No existen tandas"));
+        return next(new Error("La tanda no existe."));
       }
+
+      res.status(200).json({
+        ok: true,
+        batch,
+      });
     } catch (error) {
       next(error);
     }
   },
 
-  deleteBatch: async (req,res,next) => {
+  getAllBatches: async (req, res, next) => {
+    console.log("getAllBatches");
+    try {
+      const batch = await BatchService.getAll();
+
+      if (!batch) {
+        return next(new Error("No existen tandas"));
+      }
+
+      res.status(200).json({
+        ok: true,
+        data: batch,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteBatch: async (req, res, next) => {
     try {
       const batchesId = req.params.batchesId;
-      const batch = await batchService.delete(batchesId);
+      const batch = await BatchService.delete(batchesId);
       if (!batch) {
         throw new Error("La tanda no existe");
       }
-      
-      res.status(204).json({
-        ok:true,
+
+      res.status(200).json({
+        ok: true,
       });
     } catch (error) {
       next(error);
     }
   },
 
-  editBatch: async (res,req,next) => {
+  editBatch: async (req, res, next) => {
     try {
       const batchId = req.params.batchId;
-      const batch = await batchService.edit(batchId);
+      const batch = await BatchService.edit(batchId);
 
       if (!batch) {
-        return next( new Error("La tanda no existe"));
+        return next(new Error("La tanda no existe"));
       }
 
-      res.status(204).json({
-        ok:true,
-        batch
+      res.status(201).json({
+        ok: true,
+        batch,
       });
     } catch (error) {
-      next(console.log(error));
+      next(error);
     }
   },
 };
