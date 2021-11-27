@@ -1,4 +1,5 @@
-var UserService = require("../services/user");
+const UserService = require("../services/user");
+
 module.exports = {
   createUser: async (req, res, next) => {
     console.log("createUser");
@@ -8,6 +9,7 @@ module.exports = {
       /*    dentro del if hacer que saque algunos datos del nombre y 
       algunos del apellido y generarle una contraseña en base a eso. */
       if (!password) {
+
       }
 
       let user = await UserService.getByEmail(email);
@@ -20,7 +22,7 @@ module.exports = {
 
       UserService.create(email, password, roles, name, surname);
 
-      res.status(201).json({
+      res.status(200).json({
         ok: true,
       });
     } catch (error) {
@@ -60,12 +62,13 @@ module.exports = {
   editUser: async (req, res, next) => {
     console.log("editUser");
     try {
-      const data = req.params.userId;
+      const userId = req.params.userId;
 
       const user = await UserService.getById(userId);
+      
       if (!user) return next(new Error("El usuario no existe."));
 
-      res.status(204).json({
+      res.status(201).json({
         ok: true,
       });
     } catch (error) {
@@ -78,11 +81,8 @@ module.exports = {
       const userId = req.params.userId;
 
       const user = await UserService.delete(userId);
-      if (!user) {
-        return next(new Error("El usuario no existe."));
-      }
 
-      res.status(204).json({
+      res.status(200).json({
         ok: true,
       });
     } catch (error) {

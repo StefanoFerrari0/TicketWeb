@@ -1,6 +1,6 @@
-var User = require("../models/userModel");
-var UserService = require("../services/user");
-var jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
+const UserService = require("../services/user");
+const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
 
 module.exports = {

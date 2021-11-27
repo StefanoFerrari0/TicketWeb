@@ -1,7 +1,8 @@
-var express = require("express");
-var router = express.Router();
-var UserController = require("../../controllers/user");
-var AuthController = require("../../controllers/auth");
+const express = require("express");
+const router = express.Router();
+const UserController = require("../../controllers/user");
+const AuthController = require("../../controllers/auth");
+
 
 const Middleware = require("../../middlewares/index");
 
