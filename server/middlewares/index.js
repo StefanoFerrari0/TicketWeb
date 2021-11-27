@@ -1,16 +1,14 @@
-const UserController = require("../controllers/user");
-const User = require("../models/userModel");
+const UserService = require("../services/user");
 const Role = require("../models/roleModel");
 const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
-const {getById} = require("../services/user")
 
 module.exports = {
   isRole: function (name) {
     return async (req, res, next) => {
       try {
         const userId = req.userId;
-        const user = User.findById(userId);
+        const user = UserService.getById(userId);
         const roles = await Role.find({ _id: { $in: user.roles } });
 
         for (let i = 0; i < roles.length; i++) {
@@ -35,7 +33,7 @@ module.exports = {
         const accessToken = req.cookies.accessToken;
         const { id, exp } = await jwt.verify(accessToken, TOKEN_SECRET);
 
-        const userLogged = await getById(id);
+        const userLogged = await UserService.getById(id);
 
         if (!userLogged) {
           next(new Error(`Usuario no encontrado.`));

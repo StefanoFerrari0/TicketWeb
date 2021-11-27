@@ -1,4 +1,5 @@
 const UserService = require("../services/user");
+
 module.exports = {
   createUser: async (req, res, next) => {
     console.log("createUser");
@@ -64,7 +65,7 @@ module.exports = {
       const userId = req.params.userId;
 
       const user = await UserService.getById(userId);
-
+      
       if (!user) return next(new Error("El usuario no existe."));
 
       res.status(201).json({
@@ -80,10 +81,6 @@ module.exports = {
       const userId = req.params.userId;
 
       const user = await UserService.delete(userId);
-
-      if (!user) {
-        return next(new Error("El usuario no existe."));
-      }
 
       res.status(200).json({
         ok: true,
