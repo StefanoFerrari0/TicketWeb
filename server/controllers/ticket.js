@@ -3,7 +3,7 @@ const EmailService = require("../services/email");
 
 module.exports = {
   createTicket: async (req, res, next) => {
-    console.log("createTickeck");
+    console.log("createTicket");
     try {
       const {
         buyDate,
@@ -43,7 +43,7 @@ module.exports = {
   },
 
   getTicketById: async (req, res, next) => {
-    console.log("getTicketId");
+    console.log("getTicketById");
     try {
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.getById(ticketId);
@@ -79,7 +79,7 @@ module.exports = {
   },
 
   editTicket: async (req, res, next) => {
-    try {
+/*     try {
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.edit(ticketId);
 
@@ -93,16 +93,17 @@ module.exports = {
       });
     } catch (error) {
       next(error);
-    }
+    } */
   },
   
   deleteTicket: async (req, res, next) => {
+    console.log("deleteTicket");
     try {
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.delete(ticketId);
 
       if (!ticket) {
-        return next(new Error("no existe el ticket"));
+        return next(new Error("No existe el ticket"));
       }
 
       res.status(200).json({ 

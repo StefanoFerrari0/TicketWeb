@@ -35,11 +35,9 @@ module.exports = {
     try {
       const userLogged = req.userLogged;
       const userId = req.params.userId;
+      const isAdmin = userLogged.roles.find(element => element.name == "admin")
 
-      if (
-        userLogged.roles.find("admin") === undefined &&
-        userLogged._id !== userId
-      ) {
+      if (userLogged._id !== userId && isAdmin === undefined) {
         return next(
           new Error(
             "Para acceder a la información de otro usuario debe ser Admin."
@@ -83,10 +81,7 @@ module.exports = {
       const userLogged = req.userLogged;
       const userId = req.params.userId;
 
-      if (
-        userLogged.roles.find("admin") === undefined &&
-        userLogged._id !== userId
-      ) {
+      if (userLogged._id !== userId && isAdmin === undefined) {
         return next(
           new Error(
             "Para editar la información de otro usuario debe ser Admin."
@@ -94,6 +89,7 @@ module.exports = {
         );
       }
 
+      //Ver si en el edit vamos a editar tambien la password o usamos otro servicio (Creo que deberia ser otro)
       const data = {
         email,
         password,

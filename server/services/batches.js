@@ -31,8 +31,8 @@ module.exports = {
     return batch;
   },
 
-  edit: async (data) => {
-    const batch = await Batch.findByIdAndUpdate(data._id, data);
+  edit: async (batchId, data) => {
+    const batch = await Batch.findByIdAndUpdate(batchId, data);
     return batch;
   },
 };

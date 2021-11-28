@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const TicketController = require("../../controllers/ticket")
+const Middleware = require("../../middlewares/index");
 
 //Create
 router.post("/", TicketController.createTicket );
@@ -9,7 +10,7 @@ router.post("/", TicketController.createTicket );
 router.get("/:ticketId", TicketController.getTicketById );
 
 //GetAll
-router.get("/", TicketController.getAllTickets);
+router.get("/", Middleware.isRole("admin"), TicketController.getAllTickets);
 
 //Edit
 router.put("/edit/:ticketId", TicketController.editTicket);

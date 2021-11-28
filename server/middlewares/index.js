@@ -7,15 +7,12 @@ module.exports = {
   isRole: function (name) {
     return async (req, res, next) => {
       try {
-        const userId = req.userLogged._id;
-        console.log("isRole - userId: ", userId);
-        const user = UserService.getById(userId);
-        const roles = await Role.find({ _id: { $in: user.roles } });
-
+        const user = req.userLogged;        
+        const roles = user.roles;
+        
         for (let i = 0; i < roles.length; i++) {
           if (roles[i].name === name) {
-            next();
-            return;
+            return next();
           }
         }
 
@@ -32,7 +29,7 @@ module.exports = {
     try {
       if (req.cookies && req.cookies.accessToken) {
         const accessToken = req.cookies.accessToken;
-        const { id, exp } = await jwt.verify(accessToken, TOKEN_SECRET);
+        const { id, exp } = jwt.verify(accessToken, TOKEN_SECRET);
 
         const userLogged = await UserService.getById(id);
 
@@ -50,7 +47,6 @@ module.exports = {
           );
         }
 
-        console.log("isLogin - userLogged ID: ", userLogged._id);
         res.locals.userLogged = userLogged;
         req.userLogged = userLogged;
 

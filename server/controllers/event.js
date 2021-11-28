@@ -66,6 +66,22 @@ module.exports = {
     }
   },
 
+  editEvent: async (req, res, next) => {
+    /* try {
+      const data = req.params.data;
+      const event = await EventService.edit(data);
+
+      if (!event) return next(new Error("el usuario no existe"));
+
+      res.status(201).json({ 
+        ok: true, 
+        event 
+      });
+    } catch (error) {
+      next(error);
+    } */
+  },
+
   deleteEvent: async (req, res, next) => {
     console.log("deleteEvent");
     try {
@@ -78,22 +94,6 @@ module.exports = {
       }
 
       res.status(200).json({ ok: true });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  editEvent: async (req, res, next) => {
-    try {
-      const data = req.params.data;
-      const event = await EventService.edit(data);
-
-      if (!event) return next(new Error("el usuario no existe"));
-
-      res.status(201).json({ 
-        ok: true, 
-        event 
-      });
     } catch (error) {
       next(error);
     }

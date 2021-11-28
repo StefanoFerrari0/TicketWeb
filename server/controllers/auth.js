@@ -5,14 +5,14 @@ const { TOKEN_SECRET } = require("../config/index");
 
 module.exports = {
   loginUser: async (req, res, next) => {
-    console.log("LoginUser");
+    console.log("loginUser");
     try {
       const { email, password } = req.body;
 
       const user = await UserService.getByEmail(email);
 
       if (!user) {
-        throw new Error("No existe ninguna cuenta asociada a ese email.");
+        return next(new Error("No existe ninguna cuenta asociada a ese email."));
       }
 
       const matchPassword = await User.comparePassword(password, user.password);

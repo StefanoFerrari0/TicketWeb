@@ -59,24 +59,8 @@ module.exports = {
     }
   },
 
-  deleteBatch: async (req, res, next) => {
-    try {
-      const batchesId = req.params.batchesId;
-      const batch = await BatchService.delete(batchesId);
-      if (!batch) {
-        throw new Error("La tanda no existe");
-      }
-
-      res.status(200).json({
-        ok: true,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
   editBatch: async (req, res, next) => {
-    try {
+/*     try {
       const batchId = req.params.batchId;
       const batch = await BatchService.edit(batchId);
 
@@ -87,6 +71,22 @@ module.exports = {
       res.status(201).json({
         ok: true,
         batch,
+      });
+    } catch (error) {
+      next(error);
+    } */
+  },
+
+  deleteBatch: async (req, res, next) => {
+    try {
+      const batchesId = req.params.batchesId;
+      const batch = await BatchService.delete(batchesId);
+      if (!batch) {
+        return next(new Error("La tanda no existe"));
+      }
+
+      res.status(200).json({
+        ok: true,
       });
     } catch (error) {
       next(error);

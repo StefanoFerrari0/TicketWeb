@@ -25,7 +25,7 @@ module.exports = {
   },
 
   getById: async (userId) => {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("roles").exec();
     return user;
   },
 
@@ -42,12 +42,11 @@ module.exports = {
 
   getAll: async () => {
     const users = await User.find({ isDelete: false });
-    console.log(users);
     return users;
   },
 
-  edit: async (data) => {
-    const user = await User.findByIdAndUpdate(data._id, data);
+  edit: async (userId, data) => {
+    const user = await User.findByIdAndUpdate(userId, data);
     return user;
   },
 

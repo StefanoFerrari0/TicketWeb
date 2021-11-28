@@ -34,14 +34,14 @@ module.exports = {
 
     return event;
   },
+  
+  edit: async (eventId, data) => {
+    const event = await Event.findByIdAndUpdate(eventId, data);
+    return event;
+  },
 
   delete: async (eventId) => {
     const event = await Event.findByIdAndUpdate(eventId, { isDelete: true });
-    return event;
-  },
-  
-  edit: async (data) => {
-    const event = await Event.findByIdAndUpdate(data._id, data);
     return event;
   },
 };

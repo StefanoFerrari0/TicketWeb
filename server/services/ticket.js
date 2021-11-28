@@ -52,15 +52,15 @@ module.exports = {
     return tickets;
   },
 
+  edit: async (ticketId, data) => {
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, data);
+    return ticket;
+  },
+
   delete: async (ticketId) => {
     const ticket = await Ticket.findByIdAndUpdate(ticketId, {
       isDeleted: true,
     });
-    return ticket;
-  },
-  
-  edit: async (data) => {
-    const ticket = await Ticket.findByIdAndUpdate(data._id, data);
     return ticket;
   },
 };
