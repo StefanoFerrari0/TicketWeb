@@ -1,65 +1,101 @@
-var mongoose = require("mongoose");
-var User = mongoose.model("userModel");
+const EventService = require("../services/event");
 
-app.post("/api/event/", (req, res) => {
-  console.log("POST /API/EVENT");
-  console.log(req.body);
+module.exports = {
+  createEvent: async (req, res, next) => {
+    console.log("createEvent");
+    try {
+      const { name, date, batches } = req.body;
+      const event = await EventService.create(name, date, batches);
+      res.status(200).json({
+        ok: true,
+        event,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 
-  let event = new Event();
-});
+  getAllEvents: async (req, res, next) => {
+    console.log("getAllEvents");
+    try {
+      const events = await EventService.getAll();
+      res.status(200).json({
+        ok: true,
+        data: events,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 
-const handler = async (req, res) => {
-  const { method } = req;
-  const { name, date, isDelete } = req.body;
+  getEventId: async (req, res, next) => {
+    console.log("getEventId");
+    try {
+      const eventId = req.params.eventId;
+      const event = await EventService.getById(eventId);
 
-  switch (method) {
-    case "POST":
-      try {
-        const event = new Event();
-        (name = req.body.name),
-          (date = req.body.date),
-          (isDelete = req.body.isDelete);
-        event.save((err, eventnew) => {
-          if (err)
-            res
-              .status(500)
-              .send({ message: `Error al crear el evento:${err}` });
-          res.status(200).send({ event: eventnew });
-        });
-      } catch (error) {
-        res.status(400).json({
-          success: false,
-          message: error.message,
-        });
-      }
-      break;
-    case "GET":
-      try {
-        app.get("/api/event/", (req, res) => {
-          let event = req.params.event;
-
-          Event.find(event, (err, even) => {
-            if (err)
-              return res
-                .status(500)
-                .send({ message: `Error al realizar la peticion :${err}` });
-            if (!even)
-              return res.status(400).send({ message: `el evento no existe` });
-
-            res.status(200).send({ even });
-          });
-        });
-      } catch {
-        res.status(400).json({
-          success: false,
-          message: error.message,
-        });
+      if (!event) {
+        return next(new Error("No se encontro el evento."));
       }
 
-    default:
-      res.status(400).json({ success: false });
-      break;
-  }
+      res.status(200).json({
+        ok: true,
+        event,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getEventByName: async (req, res, next) => {
+    console.log("getEventByName");
+    try {
+      const name = req.params.name;
+      const event = await EventService.getByName(name);
+
+      if (!event) {
+        return next(new Error("No existe el evento."));
+      }
+
+      res.status(200).json({
+        ok: true,
+        event,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteEvent: async (req, res, next) => {
+    console.log("deleteEvent");
+    try {
+      const eventId = req.params.eventId;
+
+      const event = await EventService.delete(eventId);
+
+      if (!event) {
+        return next(new Error("El evento no existe."));
+      }
+
+      res.status(200).json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  editEvent: async (req, res, next) => {
+    try {
+      const data = req.params.data;
+      const event = await EventService.edit(data);
+
+      if (!event) return next(new Error("el usuario no existe"));
+
+      res.status(201).json({ 
+        ok: true, 
+        event 
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
-
-export default handler;

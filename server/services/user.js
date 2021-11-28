@@ -1,6 +1,7 @@
-var mongoose = require("mongoose");
-var User = require("../models/userModel");
-var Role = require("../models/roleModel");
+const mongoose = require("mongoose");
+const User = require("../models/userModel");
+const Role = require("../models/roleModel");
+
 
 module.exports = {
   create: async (email, password, roles, name, surname) => {
@@ -17,7 +18,7 @@ module.exports = {
       isDelete: false,
     });
 
-    newUser.password = await User.encryptPassword(user.password);
+    newUser.password = await User.encryptPassword(newUser.password);
 
     await newUser.save();
     return newUser;
