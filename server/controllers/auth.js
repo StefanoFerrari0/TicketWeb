@@ -83,7 +83,6 @@ module.exports = {
         );
       }
 
-      console.log("isLogin - userLogged ID: ", userLogged._id);
       res.locals.userLogged = userLogged;
       req.userLogged = userLogged;
 

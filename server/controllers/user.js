@@ -64,6 +64,13 @@ module.exports = {
     console.log("getAllUsers");
     try {
       const users = await UserService.getAll();
+
+      // borramos las contraseñas
+      users.map((user) => {
+        user.password = undefined; 
+      }
+      )
+
       res.status(200).json({
         ok: true,
         data: users,
