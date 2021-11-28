@@ -80,6 +80,7 @@ module.exports = {
 
       const userLogged = req.userLogged;
       const userId = req.params.userId;
+      const isAdmin = userLogged.roles.find(element => element.name == "admin")
 
       if (userLogged._id !== userId && isAdmin === undefined) {
         return next(
