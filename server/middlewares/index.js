@@ -7,7 +7,8 @@ module.exports = {
   isRole: function (name) {
     return async (req, res, next) => {
       try {
-        const userId = req.userId;
+        const userId = req.userLogged._id;
+        console.log("isRole - userId: ", userId);
         const user = UserService.getById(userId);
         const roles = await Role.find({ _id: { $in: user.roles } });
 
@@ -28,8 +29,8 @@ module.exports = {
   },
 
   isLogin: async (req, res, next) => {
-    if (req.cookies && req.cookies.accessToken) {
-      try {
+    try {
+      if (req.cookies && req.cookies.accessToken) {
         const accessToken = req.cookies.accessToken;
         const { id, exp } = await jwt.verify(accessToken, TOKEN_SECRET);
 
@@ -49,15 +50,20 @@ module.exports = {
           );
         }
 
-        res.locals.loggedInUser = userLogged;
-        req.userId = userLogged;
+        console.log("isLogin - userLogged ID: ", userLogged._id);
+        res.locals.userLogged = userLogged;
+        req.userLogged = userLogged;
 
         next();
-      } catch (error) {
-        next(error);
+      } else {
+        return next(
+          new Error(
+            `Para poder realizar esta acción requiere estar autentificado.`
+          )
+        );
       }
-    } else {
-      next();
+    } catch (error) {
+      next(error);
     }
   },
 };

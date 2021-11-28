@@ -14,13 +14,14 @@ const batchesRoutes = require("./api/routes/batches");
 const eventRoutes = require("./api/routes/event");
 const ticketRoutes = require("./api/routes/ticket");
 const userRoutes = require("./api/routes/user");
-
+const authRoutes = require("./api/routes/auth");
 //Middlewares
 const { isLogin } = require("./middlewares/index");
 
-app.use("/batches", isLogin, batchesRoutes);
-app.use("/event", isLogin, eventRoutes);
-app.use("/ticket", isLogin, ticketRoutes);
-app.use("/user", userRoutes);
+app.use("/api/batches", isLogin, batchesRoutes);
+app.use("/api/event", isLogin, eventRoutes);
+app.use("/api/ticket", isLogin, ticketRoutes);
+app.use("/api/user", isLogin, userRoutes);
+app.use("/api/auth", authRoutes);
 
 module.exports = app;

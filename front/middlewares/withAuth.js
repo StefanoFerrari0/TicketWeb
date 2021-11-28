@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
+/* import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
@@ -32,3 +32,4 @@ const withAuth = (WrappedComponent) => {
 };
 
 export default withAuth;
+ */

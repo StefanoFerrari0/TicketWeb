@@ -33,11 +33,26 @@ module.exports = {
   getUserById: async (req, res, next) => {
     console.log("getUserById");
     try {
+      const userLogged = req.userLogged;
       const userId = req.params.userId;
+
+      if (
+        userLogged.roles.find("admin") === undefined &&
+        userLogged._id !== userId
+      ) {
+        return next(
+          new Error(
+            "Para acceder a la información de otro usuario debe ser Admin."
+          )
+        );
+      }
+
       const user = await UserService.getById(userId);
+
       if (!user) {
         return next(new Error("El usuario no existe."));
       }
+
       res.status(200).json({
         ok: true,
         user,
@@ -48,6 +63,7 @@ module.exports = {
   },
 
   getAllUsers: async (req, res, next) => {
+    console.log("getAllUsers");
     try {
       const users = await UserService.getAll();
       res.status(200).json({
@@ -62,12 +78,32 @@ module.exports = {
   editUser: async (req, res, next) => {
     console.log("editUser");
     try {
+      const { email, password, roles, name, surname } = req.body;
+
+      const userLogged = req.userLogged;
       const userId = req.params.userId;
 
-      const user = await UserService.getById(userId);
-      
-      if (!user) return next(new Error("El usuario no existe."));
+      if (
+        userLogged.roles.find("admin") === undefined &&
+        userLogged._id !== userId
+      ) {
+        return next(
+          new Error(
+            "Para editar la información de otro usuario debe ser Admin."
+          )
+        );
+      }
 
+      const data = {
+        email,
+        password,
+        roles,
+        name,
+        surname,
+      };
+
+      await UserService.edit(userId, data);
+      
       res.status(201).json({
         ok: true,
       });
