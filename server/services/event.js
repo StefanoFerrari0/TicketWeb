@@ -16,14 +16,15 @@ module.exports = {
     return event;
   },
 
-  getAll: async () => {
-    const events = await Event.find({ isDelete: false });
-    return events;
-  },
-
+  
   getById: async (eventId) => {
     const event = await Event.findById(eventId);
     return event;
+  },
+  
+  getAll: async () => {
+    const events = await Event.find({ isDelete: false });
+    return events;
   },
 
   getByName: async (name) => {

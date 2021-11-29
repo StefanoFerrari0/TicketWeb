@@ -15,7 +15,6 @@ module.exports = {
       );
       res.status(200).json({
         ok: true,
-        batch,
       });
     } catch (error) {
       next(error);
@@ -34,7 +33,7 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-        batch,
+        data: batch,
       });
     } catch (error) {
       next(error);
@@ -70,7 +69,6 @@ module.exports = {
 
       res.status(201).json({
         ok: true,
-        batch,
       });
     } catch (error) {
       next(error);

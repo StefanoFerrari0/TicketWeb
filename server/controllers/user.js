@@ -53,7 +53,7 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-        user,
+        data: user,
       });
     } catch (error) {
       next(error);

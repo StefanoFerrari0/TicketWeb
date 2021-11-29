@@ -8,7 +8,6 @@ module.exports = {
       const event = await EventService.create(name, date, batches);
       res.status(200).json({
         ok: true,
-        event,
       });
     } catch (error) {
       next(error);
@@ -35,12 +34,12 @@ module.exports = {
       const event = await EventService.getById(eventId);
 
       if (!event) {
-        return next(new Error("No se encontro el evento."));
+        return next(new Error("No se encontró el evento."));
       }
 
       res.status(200).json({
         ok: true,
-        event,
+        data: event,
       });
     } catch (error) {
       next(error);
@@ -59,7 +58,7 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-        event,
+        data: event,
       });
     } catch (error) {
       next(error);
@@ -75,7 +74,6 @@ module.exports = {
 
       res.status(201).json({ 
         ok: true, 
-        event 
       });
     } catch (error) {
       next(error);

@@ -35,7 +35,6 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-        ticket,
       });
     } catch (error) {
       next(error);
@@ -54,7 +53,7 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-        ticket,
+        data: ticket,
       });
     } catch (error) {
       next(error);
@@ -62,6 +61,7 @@ module.exports = {
   },
 
   getAllTickets: async (req, res, next) => {
+    console.log("getAllTickets")
     try {
       const ticket = await TicketService.getAll();
 
@@ -71,7 +71,7 @@ module.exports = {
 
       res.status(200).json({
         ok: true, 
-        ticket 
+        data: ticket 
       });
     } catch (error) {
       next(error);
@@ -79,7 +79,8 @@ module.exports = {
   },
 
   editTicket: async (req, res, next) => {
-/*     try {
+/*       console.log("editTicket")  
+    try {
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.edit(ticketId);
 
@@ -89,7 +90,6 @@ module.exports = {
 
       res.status(201).json({ 
         ok: true, 
-        ticket 
       });
     } catch (error) {
       next(error);
@@ -108,7 +108,6 @@ module.exports = {
 
       res.status(200).json({ 
         ok: true, 
-        ticket
       });
     } catch (error) {
       next(error);
