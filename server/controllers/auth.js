@@ -53,7 +53,7 @@ module.exports = {
   },
 
   verifyToken: async (req, res, next) => {
-    console.log("VerifyToken");
+    console.log("verifyToken");
     try {
       const accessToken  = req.cookies.accessToken;
 

@@ -18,5 +18,4 @@ router.put("/edit/:eventId", Middleware.isRole("admin"), EventController.editEve
 //Delete
 router.put("/delete/:eventId", Middleware.isRole("admin"), EventController.deleteEvent);
 
-
 module.exports = router;

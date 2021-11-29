@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
 
-
 module.exports = {
   create: async (email, password, roles, name, surname) => {
     //buscar roles
@@ -48,6 +47,20 @@ module.exports = {
   edit: async (userId, data) => {
     const user = await User.findByIdAndUpdate(userId, data);
     return user;
+  },
+
+  resetDefaultPassword: async (name, surname) => {
+    let nameSplice = name.slice(0,1).toUpperCase();
+    nameSplice = nameSplice.concat(surname);
+    return await User.encryptPassword(nameSplice);
+  },
+
+  encryptPassword: async (password) => {
+    return await User.encryptPassword(password);
+  },
+
+  comparePassword: async (oldPassword, newPassword) => {
+    return await User.comparePassword(oldPassword, newPassword);
   },
 
   delete: async (userId) => {

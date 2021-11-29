@@ -16,10 +16,6 @@ router.get("/", Middleware.isRole("admin"), RoleController.getAllRoles);
 router.put("/edit/:roleId", Middleware.isRole("admin"), RoleController.editRole);
 
 //Delete
-router.put(
-  "/delete/:roleId",
-  Middleware.isRole("admin"),
-  RoleController.deleteRole
-);
+router.put("/delete/:roleId", Middleware.isRole("admin"), RoleController.deleteRole);
 
 module.exports = router;

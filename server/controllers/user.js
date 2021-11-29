@@ -4,13 +4,9 @@ module.exports = {
   createUser: async (req, res, next) => {
     console.log("createUser");
     try {
-      const { email, password, roles, name, surname } = req.body;
+      const { email, roles, name, surname } = req.body;
 
-      /*    dentro del if hacer que saque algunos datos del nombre y 
-      algunos del apellido y generarle una contraseña en base a eso. */
-      if (!password) {
-
-      }
+      const password = await UserService.resetDefaultPassword(name, surname);
 
       let user = await UserService.getByEmail(email);
 
@@ -20,7 +16,7 @@ module.exports = {
         );
       }
 
-      UserService.create(email, password, roles, name, surname);
+      await UserService.create(email, password, roles, name, surname);
 
       res.status(200).json({
         ok: true,
@@ -83,7 +79,7 @@ module.exports = {
   editUser: async (req, res, next) => {
     console.log("editUser");
     try {
-      const { email, password, roles, name, surname } = req.body;
+      const { email, roles, name, surname } = req.body;
 
       const userLogged = req.userLogged;
       const userId = req.params.userId;
@@ -97,10 +93,8 @@ module.exports = {
         );
       }
 
-      //Ver si en el edit vamos a editar tambien la password o usamos otro servicio (Creo que deberia ser otro)
       const data = {
         email,
-        password,
         roles,
         name,
         surname,
@@ -108,6 +102,56 @@ module.exports = {
 
       await UserService.edit(userId, data);
       
+      res.status(201).json({
+        ok: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  resetDefaultPassword: async (req, res, next) => {
+    console.log("resetDefaultPassword");
+    try {
+      const userId = req.params.userId;
+
+      const user = await UserService.getById(userId);
+
+      user.password = await UserService.resetDefaultPassword(user.name, user.surname);
+        
+      await UserService.edit(userId, user);
+
+      res.status(201).json({
+        ok: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  changePassword: async (req, res, next) => {
+    console.log("changePassword");
+    try {
+      const userId = req.userLogged._id;
+
+      const { oldPassword, newPassword } = req.body; 
+
+      const user = await UserService.getById(userId);
+
+      if (!user) {
+        return next(new Error("No existe el usuario."));
+      }
+
+      const matchPassword = await UserService.comparePassword(oldPassword, user.password);
+
+      if (!matchPassword) {
+        return next(new Error("La contraseña es incorrecta."));
+      }
+
+      user.password = await UserService.encryptPassword(newPassword);
+        
+      await UserService.edit(userId, user);
+
       res.status(201).json({
         ok: true,
       });
