@@ -97,8 +97,23 @@ function errorHandlerMiddleware(error, request, response, next) {
 	 * contains the most detail about an error:
 	 * an error message and a function call stack.
 	 */
+
+     if (NODE_ENVIRONMENT !== "production") {
+		return {
+            name: error.name,
+            message: error.message, 
+            status: error.status, 
+            stack: error.stack, 
+            path: error.path
+            };
+	    }   
+
 	if (error.stack) {
-		return error.message;
+		return {
+            name: error.name,
+            message: error.message, 
+            status: error.status, 
+            };
 	}
 
 	if (typeof error.toString === "function") {
