@@ -1,16 +1,26 @@
 const EventService = require("../services/event");
-
+const createHttpError = require("http-errors");
 module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");
     try {
       const { name, date, batches } = req.body;
       const event = await EventService.create(name, date, batches);
+      
+      if(!event){
+        const error = new createHttpError.BadRequest("No se pudo crear el evento.");
+        return next(error);
+      }
       res.status(200).json({
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -18,12 +28,22 @@ module.exports = {
     console.log("getAllEvents");
     try {
       const events = await EventService.getAll();
+      
+      if(!events){
+        const error = new createHttpError.BadRequest("No se encontraron eventos.");
+        return next(error);
+      }
       res.status(200).json({
         ok: true,
         data: events,
       });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -34,7 +54,8 @@ module.exports = {
       const event = await EventService.getById(eventId);
 
       if (!event) {
-        return next(new Error("No se encontró el evento."));
+        const error = new createHttpError.BadRequest("No se encontro el evento.");
+        return next(error);
       }
 
       res.status(200).json({
@@ -42,7 +63,12 @@ module.exports = {
         data: event,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -53,7 +79,8 @@ module.exports = {
       const event = await EventService.getByName(name);
 
       if (!event) {
-        return next(new Error("No existe el evento."));
+        const error = new createHttpError.BadRequest("No se encontro el evento.");
+        return next(error);
       }
 
       res.status(200).json({
@@ -61,23 +88,47 @@ module.exports = {
         data: event,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
   editEvent: async (req, res, next) => {
-    /* try {
-      const data = req.params.data;
-      const event = await EventService.edit(data);
-
-      if (!event) return next(new Error("el usuario no existe"));
-
+    console.log("editEvent"); 
+    try {
+      const {name, date, batches} = req.body;
+      const eventId = req.params.eventId;
+      
+      if (!eventId) {
+        const error = new createHttpError.BadRequest("No se modifico el evento.");
+        return next(error);
+      }
+      
+      const data ={
+        name,
+        date,
+        batches
+      };
+      const event = await EventService.edit(eventId,data);
+      if(!event){
+        const error = new createHttpError.BadRequest("No se modifico la evento.");
+        return next(error);
+      }
       res.status(201).json({ 
         ok: true, 
       });
     } catch (error) {
-      next(error);
-    } */
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    } 
   },
 
   deleteEvent: async (req, res, next) => {
@@ -88,12 +139,18 @@ module.exports = {
       const event = await EventService.delete(eventId);
 
       if (!event) {
-        return next(new Error("El evento no existe."));
+        const error = new createHttpError.BadRequest("No se encontro el evento.");
+        return next(error);
       }
 
       res.status(200).json({ ok: true });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 };

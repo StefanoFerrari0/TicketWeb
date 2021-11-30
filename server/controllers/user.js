@@ -1,5 +1,5 @@
 const UserService = require("../services/user");
-
+const createHttpError = require("http-errors");
 module.exports = {
   createUser: async (req, res, next) => {
     console.log("createUser");
@@ -11,9 +11,8 @@ module.exports = {
       let user = await UserService.getByEmail(email);
 
       if (user) {
-        return next(
-          new Error("Ya existe un usuario registrado con ese nombre")
-        );
+        const error = new createHttpError.BadRequest("Ya existe un usuario registrado con ese nombre.");
+        return next(error);
       }
 
       await UserService.create(email, password, roles, name, surname);
@@ -22,7 +21,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -34,17 +38,15 @@ module.exports = {
       const isAdmin = userLogged.roles.find(element => element.name == "admin")
 
       if (userLogged._id !== userId && isAdmin === undefined) {
-        return next(
-          new Error(
-            "Para acceder a la información de otro usuario debe ser Admin."
-          )
-        );
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
       }
 
       const user = await UserService.getById(userId);
 
       if (!user) {
-        return next(new Error("El usuario no existe."));
+        const error = new createHttpError.BadRequest("Ya existe el usuario.");
+        return next(error);
       }
 
       res.status(200).json({
@@ -52,7 +54,12 @@ module.exports = {
         data: user,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -72,7 +79,12 @@ module.exports = {
         data: users,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -86,11 +98,8 @@ module.exports = {
       const isAdmin = userLogged.roles.find(element => element.name == "admin")
 
       if (userLogged._id !== userId && isAdmin === undefined) {
-        return next(
-          new Error(
-            "Para editar la información de otro usuario debe ser Admin."
-          )
-        );
+        const error = new createHttpError.BadRequest("Necesita ser admin para realizar la accion.");
+        return next(error);
       }
 
       const data = {
@@ -106,7 +115,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -125,7 +139,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -139,13 +158,15 @@ module.exports = {
       const user = await UserService.getById(userId);
 
       if (!user) {
-        return next(new Error("No existe el usuario."));
+        const error = new createHttpError.BadRequest("No existe el usuario.");
+        return next(error);
       }
 
       const matchPassword = await UserService.comparePassword(oldPassword, user.password);
 
       if (!matchPassword) {
-        return next(new Error("La contraseña es incorrecta."));
+        const error = new createHttpError.BadRequest("Constaseña incorrecta.");
+        return next(error);
       }
 
       user.password = await UserService.encryptPassword(newPassword);
@@ -156,7 +177,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -170,7 +196,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 };
