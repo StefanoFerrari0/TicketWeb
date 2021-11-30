@@ -13,7 +13,7 @@ router.get("/:batchId", BatchesController.getBatchById);
 router.get("/", BatchesController.getAllBatches);
 
 //Edit
-router.put("/edit/:batchesId", Middleware.isRole("admin"), BatchesController.editBatch); 
+router.put("/edit/:batchId", Middleware.isRole("admin"), BatchesController.editBatch); 
 
 //Delete
 router.put("/delete/:batchesId", Middleware.isRole("admin"), BatchesController.deleteBatch); 

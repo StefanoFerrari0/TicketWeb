@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const UserService = require("../services/user");
 const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
+const createHttpError = require("http-errors");
 
 module.exports = {
   loginUser: async (req, res, next) => {
@@ -12,13 +13,15 @@ module.exports = {
       const user = await UserService.getByEmail(email);
 
       if (!user) {
-        return next(new Error("No existe ninguna cuenta asociada a ese email."));
+        const error = new createHttpError.BadRequest(`No existe ninguna cuenta asociada a ese email.`);
+        return next(error);
       }
 
       const matchPassword = await User.comparePassword(password, user.password);
 
       if (!matchPassword) {
-        return next(new Error("La contraseña es incorrecta."));
+        const error = new createHttpError.BadRequest("La contraseña es incorrecta.");
+        return next(error);
       }
 
       const token = jwt.sign({ id: user._id }, TOKEN_SECRET, {
@@ -48,7 +51,12 @@ module.exports = {
 
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -95,7 +103,8 @@ module.exports = {
         },
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(error.status, error);
+			next(httpError);
     }
   },
 };

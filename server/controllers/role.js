@@ -1,5 +1,6 @@
 const RoleService = require("../services/role")
-
+const createHttpError = require("http-errors");
+const role = require("../services/role");
 module.exports = {
   createRole: async (req, res, next) => {
     console.log("createRole");
@@ -8,7 +9,8 @@ module.exports = {
       let role = await RoleService.getByName(name);
 
       if (role) {
-        return next(new Error("Ya existe un rol registrado con ese nombre"));
+        const error = new createHttpError.BadRequest("Ya existe un rol.");
+        return next(error);
       }
 
      await RoleService.create(name);
@@ -17,7 +19,12 @@ module.exports = {
         ok: true,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -28,7 +35,8 @@ module.exports = {
       const role = await RoleService.getById(roleId);
 
       if (!role) {
-        return next(new Error("No se encontró el rol."));
+        const error = new createHttpError.BadRequest("No se encontro el rol.");
+        return next(error);
       }
 
       res.status(200).json({
@@ -36,7 +44,12 @@ module.exports = {
         data: role,
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
@@ -46,7 +59,8 @@ module.exports = {
       const role = await RoleService.getAll();
 
       if (!role) {
-        return next(new Error("No existen roles."));
+        const error = new createHttpError.BadRequest("No existen roles.");
+        return next(error);
       }
 
       res.status(200).json({
@@ -54,12 +68,37 @@ module.exports = {
         data: role 
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 
   editRole: async (req, res, next) => {
     console.log("editRole");
+    try {
+      const { name } = req.body;
+      const roleId = req.params.roleId;
+      const data = {name};
+      
+      const role = await RoleService.edit(roleId,data);
+
+      if(!role){
+        const error = new createHttpError.BadRequest("No se modifico el rol.");
+        return next(error);
+      }
+      res.status(201).json({ok:true});
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
   },
   
   deleteRole: async (req, res, next) => {
@@ -69,14 +108,20 @@ module.exports = {
       const role = await RoleService.delete(roleId);
 
       if (!role) {
-        return next(new Error("No existe el rol"));
+        const error = new createHttpError.BadRequest("No se pudo borrar el rol.");
+        return next(error);
       }
 
       res.status(200).json({ 
         ok: true, 
       });
     } catch (error) {
-      next(error);
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
     }
   },
 };
