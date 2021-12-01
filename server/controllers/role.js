@@ -1,6 +1,7 @@
 const RoleService = require("../services/role")
 const createHttpError = require("http-errors");
 const role = require("../services/role");
+
 module.exports = {
   createRole: async (req, res, next) => {
     console.log("createRole");
