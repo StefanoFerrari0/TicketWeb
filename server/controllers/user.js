@@ -1,5 +1,6 @@
 const UserService = require("../services/user");
 const createHttpError = require("http-errors");
+
 module.exports = {
   createUser: async (req, res, next) => {
     console.log("createUser");

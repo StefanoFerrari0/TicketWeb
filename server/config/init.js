@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
-const { MONGODB_URL } = require("./index");
-const Role = require("../models/roleModel");
-const User = require("../models/userModel");
-const UserController = require("../controllers/user");
-const nodemailer = require("nodemailer");
+const { MONGODB_URL, EMAIL, EMAIL_PASSWORD } = require("./index");
 
 module.exports = {
   initializeDB: async () => {
@@ -29,19 +25,5 @@ module.exports = {
       return res.status(200).json({});
     }
     next();
-  },
-  // el email de las 10hs y su config
-  emailAddress: async () => {
-    //soporte@andproducciones.com.ar
-    nodemailer.createTransport({
-      host: "smtp.andproducciones.com.ar",
-      port: 465,
-      secure: true, // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL, // generated ethereal user
-        pass: process.env.EMAILPASS, // generated ethereal password*/
-        
-      },
-    });
   },
 };
