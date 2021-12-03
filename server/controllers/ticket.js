@@ -149,10 +149,8 @@ module.exports = {
         return next(error);
       }
       
-      //generate QR service x ejemplo: await TicketService.createQR(ticketInfo._id, ticketInfo.name, ticketInfo.surname, ticketInfo.dni etc etc)
-      const qr = null;
-
-      //sendEmail with the QR
+      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
+      
       await EmailService.sendEmail(ticketInfo.email, qr);
       res.status(200).json({
         ok:true
