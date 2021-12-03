@@ -1,5 +1,6 @@
 const EventService = require("../services/event");
 const createHttpError = require("http-errors");
+
 module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");

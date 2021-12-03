@@ -16,6 +16,10 @@ router.get("/", Middleware.isRole("admin"), TicketController.getAllTickets);
 router.put("/edit/:ticketId", TicketController.editTicket);
 //QR
 router.post("/edit/QrCode/:ticketId", TicketController.makeQrCode);
+
+//sendQrCodeByEmail
+router.post("/send-qr-code/:ticketId", TicketController.sendQrCodeByEmail);
+
 //Delete
 router.put("/delete/:ticketId", TicketController.deleteTicket);
 

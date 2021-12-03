@@ -2,7 +2,6 @@ const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
 
-
 module.exports = {
   createTicket: async (req, res, next) => {
     console.log("createTicket");
@@ -20,8 +19,7 @@ module.exports = {
         qr
       } = req.body;
 
-      
-      const newTicket = TicketService.createTicket(
+      const ticket = await TicketService.createTicket(
         buyDate,
         seller,
         price,
@@ -34,14 +32,13 @@ module.exports = {
         qr
       );
       
-      /*const emailFound= EmailService.sendEmail(email);*/
       if(!ticket){
-        const error = new createHttpError.BadRequest("No se creo el ticket.");
+        const error = new createHttpError.BadRequest("No se creó el ticket.");
         return next(error);
       }
-      
-      
-        
+
+      await EmailService.sendEmail(ticket._id, qr);
+
       res.status(200).json({
         ok: true,
       });
@@ -62,7 +59,7 @@ module.exports = {
       const ticket = await TicketService.getById(ticketId);
 
       if (!ticket) {
-        const error = new createHttpError.BadRequest("No se encontro el ticket.");
+        const error = new createHttpError.BadRequest("No se encontró el ticket.");
         return next(error);
       }
 
@@ -107,7 +104,7 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-        const {buyDate,seller,price,email,phone,name,lastName,dni,state,qr} = req.body;
+        const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr} = req.body;
         const ticketId = req.params.ticketId;
         
       const data = {
@@ -122,12 +119,16 @@ module.exports = {
         state,
         qr,
       };
-        const ticket = await TicketService.edit(ticketId,data);
+        const ticket = await TicketService.edit(ticketId, data);
+
         if(!ticket){
-          const error = new createHttpError.BadRequest("No se modifico el ticket.");
+          const error = new createHttpError.BadRequest("No se modificó el ticket.");
           return next(error);
         }
-        res.status(201).json({ok:true});
+
+        res.status(201).json({
+          ok:true
+        });
       } catch (error) {
         const httpError = createHttpError(500, error, {
           headers: {
@@ -138,6 +139,35 @@ module.exports = {
       }
   },
   
+  sendQrCodeByEmail: async (req, res, next) => {
+    try{
+      const ticketId = req.params.ticketId;
+      const ticketInfo = await TicketService.getById(ticketId);
+
+      if(!ticketInfo){
+        const error = new createHttpError.BadRequest("No se encontró el ticket.");
+        return next(error);
+      }
+      
+      //generate QR service x ejemplo: await TicketService.createQR(ticketInfo._id, ticketInfo.name, ticketInfo.surname, ticketInfo.dni etc etc)
+      const qr =  await TicketService.createQr(ticketInfo._id, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
+
+      //sendEmail with the QR
+      await EmailService.sendEmail(ticketInfo.email, qr);
+      res.status(200).json({
+        ok:true
+      });
+    } catch(error){
+      const httpError = createHttpError(500, error, {
+        headers: {
+          "X-Custom-Header": "Value",
+        }
+      });
+      next(httpError);
+    }
+  },
+
+
   deleteTicket: async (req, res, next) => {
     console.log("deleteTicket");
     try {
@@ -145,7 +175,7 @@ module.exports = {
       const ticket = await TicketService.delete(ticketId);
 
       if (!ticket) {
-        const error = new createHttpError.BadRequest("No se borro el ticket.");
+        const error = new createHttpError.BadRequest("No se borró el ticket.");
         return next(error);
       }
 
