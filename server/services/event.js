@@ -18,7 +18,7 @@ module.exports = {
 
   
   getById: async (eventId) => {
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate("batches").exec();
     return event;
   },
   

@@ -20,7 +20,7 @@ const eventSchema = new mongoose.Schema({
   },
   batches: {
     type: mongoose.Types.ObjectId,
-    ref: "batches",
+    ref: "Batches",
   },
 });
 

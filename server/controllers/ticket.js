@@ -1,6 +1,8 @@
 const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
+
+
 module.exports = {
   createTicket: async (req, res, next) => {
     console.log("createTicket");
@@ -15,10 +17,11 @@ module.exports = {
         lastName,
         dni,
         state,
-        qr,
+        qr
       } = req.body;
 
-      const ticket = TicketService.createTicket(
+      
+      const newTicket = TicketService.createTicket(
         buyDate,
         seller,
         price,
@@ -31,12 +34,14 @@ module.exports = {
         qr
       );
       
-      
-      const emailFound= EmailService.sendEmail(email);
+      /*const emailFound= EmailService.sendEmail(email);*/
       if(!ticket){
         const error = new createHttpError.BadRequest("No se creo el ticket.");
         return next(error);
       }
+      
+      
+        
       res.status(200).json({
         ok: true,
       });
@@ -156,4 +161,34 @@ module.exports = {
       next(httpError);
     }
   },
+
+  makeQrCode: async (req,res,next)=> {
+    try{
+      const ticketId = req.params.ticketId;
+      const ticket = await TicketService.getById(ticketId);
+      if (!ticket) {
+        const error = new createHttpError.BadRequest("No se encontro el ticket.");
+        return next(error);
+      }
+      
+
+      let qr = await TicketService.createQr(id, dni, name, lastName)
+      const data={qr};
+      await TicketService.edit(ticketId,data);
+      
+      res.status(200).json({
+        ok: true,
+        
+      });
+    }
+    catch{
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
+  },
+
 };

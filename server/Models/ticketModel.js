@@ -5,6 +5,7 @@ const ticketSchema = new mongoose.Schema(
     buyDate: {
       type: Date,
       required: true,
+      default: Date.now
     },
 
     seller: {
@@ -47,7 +48,7 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
+    
     qr: {
       type: String,
       required: false,
