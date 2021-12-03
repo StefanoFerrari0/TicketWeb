@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
-const { MONGODB_URL } = require("./index");
-const Role = require("../models/roleModel");
-const User = require("../models/userModel");
-const UserController = require("../controllers/user");
+const { MONGODB_URL, EMAIL, EMAIL_PASSWORD } = require("./index");
 
 module.exports = {
   initializeDB: async () => {

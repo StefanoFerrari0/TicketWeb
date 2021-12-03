@@ -25,11 +25,7 @@ const batchesSchema = new mongoose.Schema({
     required: true,
   },
 
-  event: {
-    type: mongoose.Types.ObjectId,
-    ref: "Event",
-  },
-
+  
   isDelete: {
     type: Boolean,
     default: false,

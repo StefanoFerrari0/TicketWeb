@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
-var User = require("../models/userModel");
-var Role = require("../models/roleModel");
+const mongoose = require("mongoose");
+const User = require("../models/userModel");
+const Role = require("../models/roleModel");
 
 module.exports = {
   create: async (email, password, roles, name, surname) => {
@@ -17,14 +17,14 @@ module.exports = {
       isDelete: false,
     });
 
-    newUser.password = await User.encryptPassword(user.password);
+    newUser.password = await User.encryptPassword(newUser.password);
 
     await newUser.save();
     return newUser;
   },
 
   getById: async (userId) => {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("roles").exec();
     return user;
   },
 
@@ -41,13 +41,26 @@ module.exports = {
 
   getAll: async () => {
     const users = await User.find({ isDelete: false });
-    console.log(users);
     return users;
   },
 
-  edit: async (data) => {
-    const user = await User.findByIdAndUpdate(data._id, data);
+  edit: async (userId, data) => {
+    const user = await User.findByIdAndUpdate(userId, data);
     return user;
+  },
+
+  resetDefaultPassword: async (name, surname) => {
+    let nameSplice = name.slice(0,1).toUpperCase();
+    nameSplice = nameSplice.concat(surname);
+    return await User.encryptPassword(nameSplice);
+  },
+
+  encryptPassword: async (password) => {
+    return await User.encryptPassword(password);
+  },
+
+  comparePassword: async (oldPassword, newPassword) => {
+    return await User.comparePassword(oldPassword, newPassword);
   },
 
   delete: async (userId) => {

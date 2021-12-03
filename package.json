@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "nodemon server/index.js"
   },
   "keywords": [],
-  "author": "Stefano Ferrari, Benjamin Villafañe",
+  "author": "Stefano Ferrari && Benjamin Villafañe",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,8 +15,13 @@
     "cookies": "^0.8.0",
     "express": "^4.17.1",
     "formik": "^2.2.9",
+    "http-errors": "^1.7.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.11"
+    "mongoose": "^6.0.11",
+    "nodemailer": "^6.7.0",
+    "nodemailer-plugin-inline-base64": "^2.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "qrcode": "^1.5.0"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
