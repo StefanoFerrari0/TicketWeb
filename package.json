@@ -7,7 +7,7 @@
     "start": "nodemon server/index.js"
   },
   "keywords": [],
-  "author": "Stefano Ferrari, Benjamin Villafañe",
+  "author": "Stefano Ferrari && Benjamin Villafañe",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,7 +19,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.11",
     "nodemailer": "^6.7.0",
-    "nodemailer-smtp-transport": "^2.7.4"
+    "nodemailer-plugin-inline-base64": "^2.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "qrcode": "^1.5.0"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
