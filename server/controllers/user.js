@@ -16,6 +16,11 @@ module.exports = {
         return next(error);
       }
 
+      if(!roles){
+        const error = new createHttpError.BadRequest("No ingresó ningun rol.");
+        return next(error);
+      }
+
       await UserService.create(email, password, roles, name, surname);
 
       res.status(200).json({
