@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+import AuthService from "../api/services/auth.service";
 
 export default function useFindUser() {
   const [user, setUser] = useState(null);
@@ -7,24 +8,27 @@ export default function useFindUser() {
   useEffect(() => {
     async function findUser() {
       const cookie = Cookies.get('accessToken');
-      if (cookie) {
-
-        const options = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        };
-
-        fetch('/api/auth/verifyToken', options)
-          .then(response => response.json())
+      if(cookie){
+        await AuthService.verifyToken()
           .then(res => {  
+            if(res.data.ok){
 
-            if(res.ok){
-              setUser(res.data)
-              setLoading(false)
+              res.data.data.roles.map((role) => {
+                delete role.__v
+                delete role._id;
+                delete role.isDelete;
+                return;
+              })
+              setUser(res.data.data);
+              setLoading(false);
+            } else{
+              setLoading(false);
             }
           }).catch((err) => {
             setLoading(false);
           });
+      } else{
+        setLoading(false);
       }
     }
     findUser();
@@ -33,5 +37,6 @@ export default function useFindUser() {
   return {
     user,
     isLoading,
+    setUser
   };
 }
