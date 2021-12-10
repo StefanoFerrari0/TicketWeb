@@ -63,7 +63,7 @@ export default function UserHome() {
 
   return (
     <>
-      <div className="max-w-8xl h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div className="max-w-8xl h-full sm:h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
         <div className="flex justify-end py-10">
           <button
             type="button"
