@@ -64,8 +64,9 @@ function UserAddEdit({ history, match }) {
         history.push("/usuarios");
       })
       .catch((error) => {
-        setUserError(error);
-        console.log(userError);
+        if (error.response) {
+          setUserError(error.response.data.message.message);
+        }
       });
   }
 
@@ -76,8 +77,9 @@ function UserAddEdit({ history, match }) {
         history.push("/usuarios");
       })
       .catch((error) => {
-        setUserError(error);
-        console.log(userError);
+        if (error.response) {
+          setUserError(error.response.data.message.message);
+        }
       });
   }
 
@@ -93,12 +95,10 @@ function UserAddEdit({ history, match }) {
         if (res.data.ok) {
           const fields = ["email", "name", "surname", "roles"];
           const { _id } = res.data.data.roles[0];
-          console.log(_id);
           fields.forEach((field) => {
             formik.setFieldValue(field, res.data.data[field], false);
 
             if (field === "roles") {
-              console.log("entró ", field);
               formik.setFieldValue(field, _id, false);
             }
           });
@@ -119,7 +119,10 @@ function UserAddEdit({ history, match }) {
           <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
             <div>
               <h3 className="text-xl leading-6 font-medium text-gray-900">
-                {isAddMode ? "Crear usuario" : "Editar usuario"}
+                {isAddMode ? "Crear usuario" : "Editar usuario"}{" "}
+                {userError ? (
+                  <span className="mx-2 text-red-600">×{userError}</span>
+                ) : null}
               </h3>
               <p className="mt-1 max-w-2xl text-sm text-gray-500"></p>
             </div>
@@ -130,14 +133,12 @@ function UserAddEdit({ history, match }) {
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
                   Nombre
+                  {formik.touched.name && formik.errors.name ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.name}
+                    </span>
+                  ) : null}
                 </label>
-
-                {/*   {formik.touched.name && formik.errors.name ? (
-                    <p className="text-sm text-red-600 block font-medium sm:col-span-6">
-                      {formik.errors.name}
-                    </p>
-                  ) : null} */}
-
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
                     type="text"
@@ -159,14 +160,12 @@ function UserAddEdit({ history, match }) {
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
                   Apellido
+                  {formik.touched.surname && formik.errors.surname ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.surname}
+                    </span>
+                  ) : null}
                 </label>
-
-                {/*   {formik.touched.surname && formik.errors.surname ? (
-                  <p className="mt-2 mb-4 text-sm text-red-600">
-                    {formik.errors.surname}
-                  </p>
-                ) : null} */}
-
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
                     type="text"
@@ -188,14 +187,12 @@ function UserAddEdit({ history, match }) {
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
                   Email
+                  {formik.touched.email && formik.errors.email ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.email}
+                    </span>
+                  ) : null}
                 </label>
-
-                {/*   {formik.touched.email && formik.errors.email ? (
-                  <p className="mt-2 mb-4 text-sm text-red-600">
-                    {formik.errors.email}
-                  </p>
-                ) : null} */}
-
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
                     id="email"
@@ -216,13 +213,12 @@ function UserAddEdit({ history, match }) {
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
                   Rol
+                  {formik.touched.roles && formik.errors.roles ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.roles}
+                    </span>
+                  ) : null}
                 </label>
-
-                {/*    {formik.touched.roles && formik.errors.roles ? (
-                  <p className="mt-2 mb-4 text-sm text-red-600">
-                    {formik.errors.roles}
-                  </p>
-                ) : null} */}
 
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <select
