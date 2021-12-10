@@ -40,6 +40,7 @@ module.exports = {
         sameSite: "lax",
       });
 
+
       res.status(201).json({
         ok: true,
         data: {
@@ -48,7 +49,6 @@ module.exports = {
           roles: user.roles,
           token,
         },
-
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {
@@ -66,29 +66,35 @@ module.exports = {
       const accessToken  = req.cookies.accessToken;
 
       if(!accessToken){
-        next(new Error(`El token está vacio`));
+        const error = new createHttpError.BadRequest("El token está vacio");
+        return next(error);
       }
 
       const { id, exp } = jwt.verify(accessToken, TOKEN_SECRET);
 
       if (!id) {
-        next(new Error(`Token inválido.`));
+        const error = new createHttpError.BadRequest("Token inválido.");
+        return next(error);
       }
+
       const userId = id;
       const userLogged = await UserService.getById(userId);
 
       if (!userLogged) {
-        next(new Error(`Usuario no encontrado.`));
+        const error = new createHttpError.BadRequest("Usuario no encontrado.");
+        return next(error);
+      }
+
+      if (userLogged.isDelete) {
+        const error = new createHttpError.BadRequest("El usuario ha sido eliminado, por favor contactar con un administrador.");
+        return next(error);
       }
 
       // Si el token expiró
       if (exp < Date.now().valueOf() / 1000) {
         res.clearCookie("accessToken");
-        next(
-          new Error(
-            `"JWT token ha expirado, por favor inicie sesión para obtener uno nuevo."`
-          )
-        );
+        const error = new createHttpError.BadRequest(`"JWT token ha expirado, por favor inicie sesión para obtener uno nuevo."`);
+        return next(error);
       }
 
       res.locals.userLogged = userLogged;
@@ -99,6 +105,7 @@ module.exports = {
         data: {
           email: userLogged.email,
           name: userLogged.name,
+          surname: userLogged.surname,
           roles: userLogged.roles,
         },
       });

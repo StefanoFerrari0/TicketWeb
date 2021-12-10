@@ -4,8 +4,6 @@ const Role = require("../models/roleModel");
 
 module.exports = {
   create: async (email, password, roles, name, surname) => {
-    //buscar roles
-    const rolesFound = await Role.find({ name: { $in: roles } });
 
     let newUser = new User({
       _id: new mongoose.Types.ObjectId(),
@@ -13,7 +11,7 @@ module.exports = {
       password,
       name,
       surname,
-      roles: rolesFound.map((role) => role._id),
+      roles: [roles],
       isDelete: false,
     });
 
@@ -41,7 +39,8 @@ module.exports = {
   },
 
   getAll: async () => {
-    const users = await User.find({ isDelete: false });
+    const users = await User.find({ isDelete: false }).populate("roles").exec();
+
     return users;
   },
 

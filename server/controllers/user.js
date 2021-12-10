@@ -7,6 +7,11 @@ module.exports = {
     try {
       const { email, roles, name, surname } = req.body;
 
+      if(!roles){
+        const error = new createHttpError.BadRequest("No ingresó ningun rol.");
+        return next(error);
+      }
+      
       const password = await UserService.resetDefaultPassword(name, surname);
 
       const userLogged = req.userLogged;
@@ -25,6 +30,8 @@ module.exports = {
         const error = new createHttpError.BadRequest("Ya existe un usuario registrado con ese nombre.");
         return next(error);
       }
+
+
 
       await UserService.create(email, password, roles, name, surname);
 
