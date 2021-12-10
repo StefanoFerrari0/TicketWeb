@@ -6,7 +6,7 @@ import PrivateRoute from "./pages/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import TicketHome from "./pages/Ticket/TicketHome";
-import QrHome from "./pages/Qr/QrHome";
+import QrHome from "./pages/QR/QrHome";
 import EventHome from "./pages/Event/EventHome";
 import BatchesHome from "./pages/Batches/BatchesHome";
 import UserHome from "./pages/User/UserHome";
