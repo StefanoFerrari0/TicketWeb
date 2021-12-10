@@ -1,43 +1,58 @@
 const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
-
+const crypt = require("../services/crypt");
+const BatchService = require ("../services/batches")
 module.exports = {
   createTicket: async (req, res, next) => {
     console.log("createTicket");
     try {
       const {
         buyDate,
-        seller,
         price,
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
+        user,
+        batches,
         qr
+        
       } = req.body;
+
+      const batchQuantity = req.params.batches;
+      await BatchService.subtractQuantity(batchQuantity);
+      if (!batchQuantity)
+      {
+        const error = new createHttpError.BadRequest("No quedan más tandas para el evento.");
+        return next(error);
+      }
 
       const ticket = await TicketService.createTicket(
         buyDate,
-        seller,
         price,
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
+        user,
+        batches,
         qr
       );
-      
+       console.log(ticket);
       if(!ticket){
         const error = new createHttpError.BadRequest("No se creó el ticket.");
         return next(error);
       }
+        const Id = toString(ticket._id);
+        const hash = crypt.encrypt(Id);
+        console.log(hash);
 
-      await EmailService.sendEmail(ticket._id, qr);
+     // await EmailService.sendEmail(ticket._id, qr);
 
       res.status(200).json({
         ok: true,
@@ -55,6 +70,15 @@ module.exports = {
   getTicketById: async (req, res, next) => {
     console.log("getTicketById");
     try {
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
+
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.getById(ticketId);
 
@@ -80,6 +104,15 @@ module.exports = {
   getAllTickets: async (req, res, next) => {
     console.log("getAllTickets")
     try {
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
+
       const ticket = await TicketService.getAll();
 
       if (!ticket) {
@@ -104,7 +137,16 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-        const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr} = req.body;
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
+
+        const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr, batches, user} = req.body;
         const ticketId = req.params.ticketId;
         
       const data = {
@@ -118,6 +160,8 @@ module.exports = {
         dni,
         state,
         qr,
+        batches,
+        user
       };
         const ticket = await TicketService.edit(ticketId, data);
 
@@ -149,10 +193,8 @@ module.exports = {
         return next(error);
       }
       
-      //generate QR service x ejemplo: await TicketService.createQR(ticketInfo._id, ticketInfo.name, ticketInfo.surname, ticketInfo.dni etc etc)
-      const qr =  await TicketService.createQr(ticketInfo._id, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
-
-      //sendEmail with the QR
+      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
+      
       await EmailService.sendEmail(ticketInfo.email, qr);
       res.status(200).json({
         ok:true
@@ -173,11 +215,14 @@ module.exports = {
     try {
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.delete(ticketId);
-
+      
       if (!ticket) {
         const error = new createHttpError.BadRequest("No se borró el ticket.");
         return next(error);
       }
+      
+      const batch = ticketId.batches;
+      await BatchService.addQuantity(batch);
 
       res.status(200).json({ 
         ok: true, 
@@ -220,5 +265,31 @@ module.exports = {
       next(httpError);
     }
   },
+
+  UserTicket:async (req, res, next) =>{
+
+    try {
+
+      const ticket = await TicketService.getAll();
+      const name = req.params.name;
+      const sellerTickets = await TicketService.getAllTicketsSelled(name, ticket);
+
+      if(!sellerTickets){
+        const error = new createHttpError.BadRequest("Este usuario no vendio ningun ticket.");
+          return next(error);
+      }
+      
+      res.status(201).json({
+        ok:true
+      });
+    } catch{
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
+  }
 
 };

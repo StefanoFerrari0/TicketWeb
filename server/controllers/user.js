@@ -9,6 +9,16 @@ module.exports = {
 
       const password = await UserService.resetDefaultPassword(name, surname);
 
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
+
       let user = await UserService.getByEmail(email);
 
       if (user) {
@@ -36,9 +46,10 @@ module.exports = {
     try {
       const userLogged = req.userLogged;
       const userId = req.params.userId;
-      const isAdmin = userLogged.roles.find(element => element.name == "admin")
+      
+      const auth = UserService.checkAuth( userLogged, userId);
 
-      if (userLogged._id !== userId && isAdmin === undefined) {
+      if (auth == false) {
         const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
@@ -69,6 +80,15 @@ module.exports = {
     try {
       const users = await UserService.getAll();
 
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
       // borramos las contraseñas
       users.map((user) => {
         user.password = undefined; 
@@ -96,10 +116,11 @@ module.exports = {
 
       const userLogged = req.userLogged;
       const userId = req.params.userId;
-      const isAdmin = userLogged.roles.find(element => element.name == "admin")
+      
+      const auth = UserService.checkAuth( userLogged, userId);
 
-      if (userLogged._id !== userId && isAdmin === undefined) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para realizar la accion.");
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
 
@@ -128,7 +149,15 @@ module.exports = {
   resetDefaultPassword: async (req, res, next) => {
     console.log("resetDefaultPassword");
     try {
+      const userLogged = req.userLogged;
       const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
 
       const user = await UserService.getById(userId);
 
@@ -152,10 +181,17 @@ module.exports = {
   changePassword: async (req, res, next) => {
     console.log("changePassword");
     try {
-      const userId = req.userLogged._id;
-
       const { oldPassword, newPassword } = req.body; 
 
+      const userLogged = req.userLogged;
+      const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
       const user = await UserService.getById(userId);
 
       if (!user) {
@@ -189,7 +225,15 @@ module.exports = {
 
   deleteUser: async (req, res, next) => {
     try {
+      const userLogged = req.userLogged;
       const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
 
       const user = await UserService.delete(userId);
 

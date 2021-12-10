@@ -5,14 +5,15 @@ module.exports = {
   createBatch: async (req, res, next) => {
     console.log("createBatch");
     try {
-      const { name, dateFrom, dateTo, price, quantity } = req.body;
+      const { name, dateFrom, dateTo, price, quantity, event } = req.body;
 
       const batch = BatchService.create(
         name,
         dateFrom,
         dateTo,
         price,
-        quantity
+        quantity,
+        event
       );
       if(!batch)
       {
@@ -84,7 +85,7 @@ module.exports = {
   editBatch: async (req, res, next) => {
     console.log("editBatch") 
     try {
-      const { name, dateFrom, dateTo, price, quantity } = req.body;
+      const { name, dateFrom, dateTo, price, quantity, event } = req.body;
       
       const batchId = req.params.batchId;
       
@@ -98,6 +99,7 @@ module.exports = {
         dateTo,
         price,
         quantity,
+        event
       };
       const batch = await BatchService.edit(batchId,data);
       if(!batch){
@@ -128,6 +130,31 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
+      });
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
+  },
+
+  getBatchByEvent: async (req, res, next) => {
+    console.log("getEventByName");
+    try {
+      const name = req.params.name;
+      const batch = await BatchService.getByEvent(name);
+
+      if (!batch) {
+        const error = new createHttpError.BadRequest("No se encontro el la relacion de la tanda con el evento.");
+        return next(error);
+      }
+
+      res.status(200).json({
+        ok: true,
+        data: batch,
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {

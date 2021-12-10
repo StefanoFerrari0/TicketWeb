@@ -24,6 +24,7 @@ module.exports = {
   },
 
   getById: async (userId) => {
+    
     const user = await User.findById(userId).populate("roles").exec();
     return user;
   },
@@ -66,5 +67,19 @@ module.exports = {
   delete: async (userId) => {
     const user = await User.findByIdAndUpdate(userId, { isDelete: true });
     return user;
+  },
+  checkAuth: async (userLogged, userId) =>{
+    
+    const isAdmin = userLogged.roles.find(roles => roles.name == "admin");
+    
+    if (userLogged._id !== userId && isAdmin === undefined) {
+      //Necesita ser admin para acceder a la informacion
+      const auth = false;
+      return auth;
+    }
+    else{
+      const auth = true;
+      return auth;
+    }
   },
 };

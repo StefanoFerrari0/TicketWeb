@@ -2,50 +2,49 @@ const mongoose = require("mongoose");
 const Batch = require("../models/batchesModel");
 const Event = require("../models/eventModel");
 const Ticket = require("../models/ticketModel");
+const User = require("../models/userModel");
 const QR = require("qrcode");
 
 module.exports = {
   createTicket: async (
     buyDate,
-    seller,
     price,
     email,
     phone,
     name,
-    lastName,
+    surname,
     dni,
+    state,
+    user,
     batches,
-    events,
     qr
   ) => {
     const batchesFound = await Batch.find({ name: { $in: batches } });
-    const eventsFound = await Event.find({ name: { $in: events } });
-
+    const userFound = await User.find({name:{$in: user}});
 
     let newTicket = new Ticket({
       _id: new mongoose.Types.ObjectId(),
       buyDate,
-      seller,
       price,
       email,
       phone,
       name,
-      lastName,
+      surname,
       dni,
       qr,
       state: true,
-      batches: batchesFound.map((batches) => batches._id),
-      events: eventsFound.map((events) => events._id),
+      user: userFound.map((user)=>user._id),
+      batches: batchesFound.map((batch) => batch._id),
       isDeleted: false,
     });
-    console.log(newTicket._id);
     newTicket.email.trim();
     await newTicket.save();
     return newTicket;
   },
-
+  
+  // let results = await OrderModel.find().populate([{path: 'user', select: 'firstname'}, {path: 'meal', select: 'name'}]);
   getById: async (ticketId) => {
-    const ticket = await Ticket.findById(ticketId).populate('batch','event').exec();
+    const ticket = await Ticket.findById(ticketId).populate([{path: "user", select:'user'}, {path: "batches",select:'batches'}]).exec();
     return ticket;
     
   },
@@ -61,11 +60,9 @@ module.exports = {
   },
 
   delete: async (ticketId) => {
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, {
-      isDeleted: true,
-    });
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDeleted: true, });
     return ticket;
-  },
+   },
 
   createQr: async (id, dni, name, lastName)=>{
     let qrCode = {
@@ -84,5 +81,17 @@ module.exports = {
     });
 
     return stringQrCode;
+  },
+
+  getAllTicketsSelled:async(name, ticket)=>{
+    /*const TicketSelled;
+    ticket.forEach(ticket => {
+      if(ticket.name === name)
+      {
+        TicketSelled = ticket;
+      }
+    });
+
+    return TicketSelled;*/
   },
 };
