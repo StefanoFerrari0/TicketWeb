@@ -2,7 +2,9 @@ const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
 const crypt = require("../services/crypt");
-const BatchService = require ("../services/batches")
+const BatchService = require ("../services/batches");
+const UserService = require("../services/user");
+
 module.exports = {
   createTicket: async (req, res, next) => {
     console.log("createTicket");
@@ -22,8 +24,9 @@ module.exports = {
         
       } = req.body;
 
-      const batchQuantity = req.params.batches;
-      await BatchService.subtractQuantity(batchQuantity);
+      
+      const batchQuantity = await BatchService.subtractQuantity(batches);
+
       if (!batchQuantity)
       {
         const error = new createHttpError.BadRequest("No quedan más tandas para el evento.");
@@ -214,6 +217,8 @@ module.exports = {
     console.log("deleteTicket");
     try {
       const ticketId = req.params.ticketId;
+      const ticketFound = await TicketService.getById(ticketId);
+      
       const ticket = await TicketService.delete(ticketId);
       
       if (!ticket) {
@@ -221,7 +226,7 @@ module.exports = {
         return next(error);
       }
       
-      const batch = ticketId.batches;
+      const batch = ticketFound.batches;
       await BatchService.addQuantity(batch);
 
       res.status(200).json({ 
@@ -266,13 +271,12 @@ module.exports = {
     }
   },
 
-  UserTicket:async (req, res, next) =>{
+  getUserTicket:async (req, res, next) =>{
 
     try {
 
-      const ticket = await TicketService.getAll();
-      const name = req.params.name;
-      const sellerTickets = await TicketService.getAllTicketsSelled(name, ticket);
+      const user = req.params.user;
+      const sellerTickets = await TicketService.getAllTicketsSelled(user);
 
       if(!sellerTickets){
         const error = new createHttpError.BadRequest("Este usuario no vendio ningun ticket.");
@@ -280,13 +284,14 @@ module.exports = {
       }
       
       res.status(201).json({
-        ok:true
+        ok:true,
+        data:sellerTickets
       });
     } catch{
       const httpError = createHttpError(500, error, {
 				headers: {
 					"X-Custom-Header": "Value",
-				}
+        }
 			});
       next(httpError);
     }

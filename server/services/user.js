@@ -23,7 +23,10 @@ module.exports = {
 
   getById: async (userId) => {
     
-    const user = await User.findById(userId).populate("roles").exec();
+    let user = await User.findById(userId).populate("roles").exec();
+    if (user.isDelete == true){
+      user = false;
+    }
     return user;
   },
 

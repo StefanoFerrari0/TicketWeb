@@ -121,8 +121,8 @@ module.exports = {
 
   deleteBatch: async (req, res, next) => {
     try {
-      const batchesId = req.params.batchesId;
-      const batch = await BatchService.delete(batchesId);
+      const batchId = req.params.batchId;
+      const batch = await BatchService.delete(batchId);
       if (!batch) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
         return next(error);
@@ -144,8 +144,8 @@ module.exports = {
   getBatchByEvent: async (req, res, next) => {
     console.log("getEventByName");
     try {
-      const name = req.params.name;
-      const batch = await BatchService.getByEvent(name);
+      const event = req.params.event;
+      const batch = await BatchService.getByEvent(event);
 
       if (!batch) {
         const error = new createHttpError.BadRequest("No se encontro el la relacion de la tanda con el evento.");

@@ -18,7 +18,10 @@ module.exports = {
 
   
   getById: async (eventId) => {
-    const event = await Event.findById(eventId);
+    let event = await Event.findById(eventId);
+    if (event.isDelete == true){
+      event = false;
+    }
     return event;
   },
   

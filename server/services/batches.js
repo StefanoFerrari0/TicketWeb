@@ -4,7 +4,7 @@ const Event = require("../models/eventModel");
 
 module.exports = {
   create: async (name, dateFrom, dateTo, price, quantity,event) => {
-    const eventFound = await Event.find({ name: { $in: event } });
+    const eventFound = await Event.find({ _id: { $in: event } });
     let newBatch = new Batch({
       _id: new mongoose.Types.ObjectId(),
       name,
@@ -15,12 +15,18 @@ module.exports = {
       event: eventFound.map((event) => event._id),
       isDelete: false,
     });
+    if(newBatch.quantity <= 0 || newBatch.price < 0)
+    {
+      return false;
+    }
     await newBatch.save();
     return newBatch;
   },
 
   getById: async (batchId) => {
-    const batch = await Batch.findById(batchId).populate("event").exec();
+    let batch = await Batch.findById(batchId).populate("event").exec();
+    if(batch.isDelete == true)
+    {batch = false;}
     return batch;
   },
 
@@ -30,6 +36,7 @@ module.exports = {
   },
 
   delete: async (batchId) => {
+    console.log(batchId);
     const batch = await Batch.findByIdAndUpdate(batchId, { isDelete: true });
     return batch;
   },
@@ -40,25 +47,29 @@ module.exports = {
   },
 
   subtractQuantity: async (batchId)=>{
-    const batch = await Batch.findById(batchId);
-    if (batch.quantity==0)
-    {return null;}
+    let batch = await Batch.findById(batchId);
+    console.log(batch.quantity);
+    if (batch.quantity < 1){
+      return false;
+    }
     else{
-      await batch.findByIdAndUpdate(batch,{quantity:quantity-1});
+      await Batch.findByIdAndUpdate(batch, {quantity: batch.quantity-1});
     }
     return batch;
   },
 
   addQuantity: async (batchId)=>{
-    const batch = await Batch.findByIdAndUpdate(batchId,{quantity:quantity+1});
-    return batch;
+    const batch = await Batch.findById(batchId)
+    
+    const addedBatch = await Batch.findByIdAndUpdate(batch, {quantity: batch.quantity+1});
+    return addedBatch;
   },
 
-  getByEvent: async(name)=>{
-    const batch = await Batch.findOne({
-      name,
+  getByEvent: async(event)=>{
+    const batch = await Batch.find({
+      event:event,
       isDelete: false,
-    }).populate("Batch");
+    }).populate("event");
     return batch;
   }
 };

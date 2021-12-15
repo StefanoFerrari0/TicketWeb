@@ -13,6 +13,11 @@ const eventSchema = new mongoose.Schema({
     unique: false
   },
 
+  location: {
+    type: String,
+    required: true
+  },
+
   isDelete: {
     type: Boolean,
     default: false,

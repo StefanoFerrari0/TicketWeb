@@ -5,7 +5,7 @@ const { EMAIL, EMAIL_PASSWORD } = require("../config/index");
 const QRCode = require("qrcode");
 
 module.exports = {
-  sendEmail: async (email, message) => {
+  sendEmail: async (email, message, subject) => {
       const transporter = nodemailer.createTransport(smtpTransport({
         host:'mail.andproducciones.com.ar',
         secureConnection: true,
@@ -22,19 +22,24 @@ module.exports = {
       transporter.use('compile', inlineBase64());
 
       let html = `<img height="400" width="400" src="${message}"/>`;
+      
 
       let info = await transporter.sendMail({
         from: '"10 horas de techno 👻" <soporte@andproducciones.com.ar>', 
         to: email, 
-        subject: "Compraste una entrada para las 10hs de Techno",
+        subject: subject,//"Compraste una entrada para las 10hs de Techno",
         // text: "...?", 
-        html,
+        message,
       });
 
 
     console.log("Message sent: %s", info.messageId);
   },
 
+  templateService: async(id, data)=>{
+
+
+  },
   createQr: async (data)=>{
     let stringQrCode = JSON.stringify(data);
     return await QRCode.toDataURL(stringQrCode);

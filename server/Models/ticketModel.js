@@ -59,8 +59,6 @@ const ticketSchema = new mongoose.Schema(
       type:mongoose.Types.ObjectId,
       ref:"User"
       },
-    
-    
     batches:
       {
       type:mongoose.Types.ObjectId,
