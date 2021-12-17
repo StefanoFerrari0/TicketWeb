@@ -47,7 +47,7 @@ module.exports = {
       
       const auth = UserService.checkAuth( userLogged, userId);
 
-      if (auth == false) {
+      if (!auth) {
         const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la información de otro usuario.");
         return next(error);
       }
@@ -109,7 +109,7 @@ module.exports = {
       
       const auth = UserService.checkAuth( userLogged, userId);
 
-      if (auth == false) {
+      if (!auth) {
         const error = new createHttpError.BadRequest("Necesita ser admin para editar la informacion de otro usuario.");
         return next(error);
       }
@@ -205,7 +205,7 @@ module.exports = {
       
       const auth = UserService.checkAuth( userLogged, userId);
 
-      if (auth == false) {
+      if (!auth) {
         const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }

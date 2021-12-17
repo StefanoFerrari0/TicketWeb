@@ -13,19 +13,14 @@ module.exports = {
       isDelete: false,
       
     });
-    /*const dateNow = new Date();
-    console.log(dateNow);
-    if(date >= dateNow){
-      console.log("xd");
-      return false;
-    }*/
+    //falta validar el no crear evento con una fecha menor a la actual
     await event.save();
     return event;
   },
 
   
   getById: async (eventId) => {
-    const event = await Event.findById({_id: eventId, isDeleted: false});
+    const event = await Event.findOne({_id: eventId, isDelete: false});
     return event;
   },
   

@@ -28,7 +28,7 @@ module.exports = {
       let info = await transporter.sendMail({
         from: '"10 horas de techno 👻" <soporte@andproducciones.com.ar>', 
         to: email, 
-        subject: subject,//"Compraste una entrada para las 10hs de Techno",
+        subject: subject, //"Compraste una entrada para las 10hs de Techno",
         // text: "...?", 
         message, 
       });
@@ -36,7 +36,7 @@ module.exports = {
  
     console.log("Message sent: %s", info.messageId);
   },
-
+  //esto deberia devolver un obj con el subject y el html
   templateService: async(id, data)=>{
     switch (id) {
       case 1:
@@ -60,11 +60,7 @@ module.exports = {
   createQr: async (data)=>{
     const id = toString(data.ticketId)
     
-    console.log(id);
-
     data.ticketId = crypt.encrypt(id);
-    
-    console.log(data.ticketId);
     
     let stringQrCode = JSON.stringify(data);
     return await QRCode.toDataURL(stringQrCode);

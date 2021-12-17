@@ -24,7 +24,7 @@ module.exports = {
   },
 
   getById: async (batchId) => {
-    const batch = await Batch.findById({_id: batchId, isDeleted: false}).populate('event').exec();
+    const batch = await Batch.findOne({_id: batchId , isDelete: false}).populate('event').exec();
     return batch;
   },
 
@@ -45,6 +45,7 @@ module.exports = {
 
   subtractQuantity: async (batchId)=>{
     let batch = await Batch.findById(batchId);
+    
     if (batch.quantity < 1){
       return false;
     }

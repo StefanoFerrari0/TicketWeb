@@ -23,7 +23,7 @@ module.exports = {
 
   getById: async (userId) => {
     
-    const user = await User.findById({_id: userId, isDeleted: false}).populate('roles').exec();
+    const user = await User.findOne({_id: userId, isDelete: false}).populate('roles').exec();
     return user;
   },
 
@@ -68,11 +68,8 @@ module.exports = {
     return user;
   },
   checkAuth: async (userLogged, userId) =>{
-    console.log(userLogged);
-    
     const isAdmin = userLogged.roles.name === 'admin' ? true : false
     
-
     if (userLogged._id !== userId && isAdmin === false ) {
       //Necesita ser admin para acceder a la informacion
       return false;

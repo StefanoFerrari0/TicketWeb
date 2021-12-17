@@ -37,12 +37,12 @@ module.exports = {
   
   
   getById: async (ticketId) => {
-    const ticket = await Ticket.findById({_id: ticketId, isDeleted: false}).populate('batches').exec();
+    const ticket = await Ticket.findOne({_id: ticketId, isDelete: false}).populate('batches').exec();
     return ticket;
   },
 
   getAll: async () => {
-    const tickets = await Ticket.find({ isDeleted: false });
+    const tickets = await Ticket.find({ isDelete: false });
     return tickets;
   },
 
@@ -52,12 +52,12 @@ module.exports = {
   },
 
   delete: async (ticketId) => {
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDeleted: true, });
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDelete: true, });
     return ticket;
    },
 
   getAllTicketsSelled:async(userId)=>{
-    const ticket = await Ticket.find({user: userId, isDeleted: false});
+    const ticket = await Ticket.find({user: userId, isDelete: false});
     return ticket;
   },
 };

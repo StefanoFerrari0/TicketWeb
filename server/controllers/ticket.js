@@ -47,8 +47,9 @@ module.exports = {
         return next(error);
       }
       
-      const qr = await EmailService.createQr(ticket._id, ticket.dni, ticket.name, ticket.lastName)
-      await EmailService.sendEmail(ticket.email, qr);
+      const qr = await EmailService.createQr(ticket._id, ticket.dni, ticket.name, ticket.surname)
+      
+      await EmailService.sendEmail(ticket.email, qr, "Tu entrada a las 10hs");
 
       res.status(200).json({
         ok: true,
@@ -78,7 +79,7 @@ module.exports = {
       const userLogged = req.userLogged;
       const auth = UserService.checkAuth( userLogged, ticket.user);
 
-      if (auth == false) {
+      if (!auth) {
         const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
@@ -127,7 +128,7 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-        const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr, batches, user} = req.body;
+        const {buyDate, seller, price, email, phone, name, surname, dni, state, batches, user} = req.body;
         const ticketId = req.params.ticketId;
         
       const data = {
@@ -137,10 +138,9 @@ module.exports = {
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
-        qr,
         batches,
         user
       };
@@ -174,9 +174,10 @@ module.exports = {
         return next(error);
       }
       
-      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
+      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.surname);
+      const subject = await EmailService.templateService();
+      await EmailService.sendEmail(ticketInfo.email, qr, "Tu entrada de las 10 hs");
       
-      await EmailService.sendEmail(ticketInfo.email, qr);
       res.status(200).json({
         ok:true
       });

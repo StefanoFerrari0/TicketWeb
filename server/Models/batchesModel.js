@@ -11,7 +11,7 @@ const batchesSchema = new mongoose.Schema({
   dateFrom: {
     type: Date,
     required: true,
-    
+    default: Date.now()
   },
 
   dateTo: {

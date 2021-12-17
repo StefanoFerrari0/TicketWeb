@@ -7,7 +7,7 @@ const Middleware = require("../../middlewares/index");
 router.post("/", Middleware.isRole("admin"), BatchesController.createBatch ); 
 
 //GetById
-router.get("/:batchId", BatchesController.getBatchById);
+router.get("/:batchesId", BatchesController.getBatchById);
 
 //GetAll
 router.get("/", BatchesController.getAllBatches);
