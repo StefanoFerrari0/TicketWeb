@@ -1,6 +1,8 @@
 const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
+const BatchService = require ("../services/batches");
+const UserService = require("../services/user");
 
 module.exports = {
   createTicket: async (req, res, next) => {
@@ -8,36 +10,46 @@ module.exports = {
     try {
       const {
         buyDate,
-        seller,
         price,
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
-        qr,
+        user,
+        batches,
       } = req.body;
+      
+      const batchQuantity = await BatchService.subtractQuantity(batches);
+
+      if (!batchQuantity)
+      {
+        const error = new createHttpError.BadRequest("No quedan más tandas para el evento.");
+        return next(error);
+      }
 
       const ticket = await TicketService.createTicket(
         buyDate,
-        seller,
         price,
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
-        qr
+        user,
+        batches
       );
       
       if(!ticket){
         const error = new createHttpError.BadRequest("No se creó el ticket.");
         return next(error);
       }
-
-      await EmailService.sendEmail(ticket._id, qr);
+      
+      const qr = await EmailService.createQr(ticket._id, ticket.dni, ticket.name, ticket.surname)
+      
+      await EmailService.sendEmail(ticket.email, qr, "Tu entrada a las 10hs");
 
       res.status(200).json({
         ok: true,
@@ -55,11 +67,20 @@ module.exports = {
   getTicketById: async (req, res, next) => {
     console.log("getTicketById");
     try {
+      
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.getById(ticketId);
 
       if (!ticket) {
         const error = new createHttpError.BadRequest("No se encontró el ticket.");
+        return next(error);
+      }
+
+      const userLogged = req.userLogged;
+      const auth = UserService.checkAuth( userLogged, ticket.user);
+
+      if (!auth) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
 
@@ -80,13 +101,16 @@ module.exports = {
   getAllTickets: async (req, res, next) => {
     console.log("getAllTickets")
     try {
+      
+
       const ticket = await TicketService.getAll();
 
       if (!ticket) {
         const error = new createHttpError.BadRequest("No existen tickets.");
         return next(error);
       }
-
+      
+      
       res.status(200).json({
         ok: true, 
         data: ticket 
@@ -104,7 +128,7 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-        const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr} = req.body;
+        const {buyDate, seller, price, email, phone, name, surname, dni, state, batches, user} = req.body;
         const ticketId = req.params.ticketId;
         
       const data = {
@@ -114,10 +138,11 @@ module.exports = {
         email,
         phone,
         name,
-        lastName,
+        surname,
         dni,
         state,
-        qr,
+        batches,
+        user
       };
         const ticket = await TicketService.edit(ticketId, data);
 
@@ -143,15 +168,16 @@ module.exports = {
     try{
       const ticketId = req.params.ticketId;
       const ticketInfo = await TicketService.getById(ticketId);
-
+      
       if(!ticketInfo){
         const error = new createHttpError.BadRequest("No se encontró el ticket.");
         return next(error);
       }
       
-      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.lastName);
+      const qr = await EmailService.createQr(ticketId, ticketInfo.dni, ticketInfo.name, ticketInfo.surname);
+      const subject = await EmailService.templateService();
+      await EmailService.sendEmail(ticketInfo.email, qr, "Tu entrada de las 10 hs");
       
-      await EmailService.sendEmail(ticketInfo.email, qr);
       res.status(200).json({
         ok:true
       });
@@ -170,12 +196,17 @@ module.exports = {
     console.log("deleteTicket");
     try {
       const ticketId = req.params.ticketId;
+      const ticketFound = await TicketService.getById(ticketId);
+      
       const ticket = await TicketService.delete(ticketId);
-
+      
       if (!ticket) {
         const error = new createHttpError.BadRequest("No se borró el ticket.");
         return next(error);
       }
+      
+      const batch = ticketFound.batches;
+      await BatchService.addQuantity(batch);
 
       res.status(200).json({ 
         ok: true, 
@@ -189,4 +220,31 @@ module.exports = {
       next(httpError);
     }
   },
+  
+  getUserTicket:async (req, res, next) =>{
+
+    try {
+
+      const userId = req.params.userId;
+      const sellerTickets = await TicketService.getAllTicketsSelled(userId);
+
+      if(!sellerTickets){
+        const error = new createHttpError.BadRequest("Este usuario no vendio ningun ticket.");
+          return next(error);
+      }
+      
+      res.status(201).json({
+        ok:true,
+        data:sellerTickets
+      });
+    } catch{
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+        }
+			});
+      next(httpError);
+    }
+  }
+
 };

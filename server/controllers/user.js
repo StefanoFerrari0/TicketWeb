@@ -14,6 +14,7 @@ module.exports = {
       
       const password = await UserService.resetDefaultPassword(name, surname);
 
+      
       let user = await UserService.getByEmail(email);
 
       if (user) {
@@ -43,10 +44,11 @@ module.exports = {
     try {
       const userLogged = req.userLogged;
       const userId = req.params.userId;
-      const isAdmin = userLogged.roles.find(element => element.name == "admin")
+      
+      const auth = UserService.checkAuth( userLogged, userId);
 
-      if (userLogged._id !== userId && isAdmin === undefined) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+      if (!auth) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la información de otro usuario.");
         return next(error);
       }
 
@@ -76,6 +78,7 @@ module.exports = {
     try {
       const users = await UserService.getAll();
 
+     
       // borramos las contraseñas
       users.map((user) => {
         user.password = undefined; 
@@ -103,10 +106,11 @@ module.exports = {
 
       const userLogged = req.userLogged;
       const userId = req.params.userId;
-      const isAdmin = userLogged.roles.find(element => element.name == "admin")
+      
+      const auth = UserService.checkAuth( userLogged, userId);
 
-      if (userLogged._id !== userId && isAdmin === undefined) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para realizar la accion.");
+      if (!auth) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para editar la informacion de otro usuario.");
         return next(error);
       }
 
@@ -136,7 +140,7 @@ module.exports = {
     console.log("resetDefaultPassword");
     try {
       const userId = req.params.userId;
-
+      
       const user = await UserService.getById(userId);
 
       user.password = await UserService.resetDefaultPassword(user.name, user.surname);
@@ -159,10 +163,10 @@ module.exports = {
   changePassword: async (req, res, next) => {
     console.log("changePassword");
     try {
-      const userId = req.userLogged._id;
-
       const { oldPassword, newPassword } = req.body; 
-
+      
+      const userId = req.params.userId;
+      
       const user = await UserService.getById(userId);
 
       if (!user) {
@@ -196,7 +200,15 @@ module.exports = {
 
   deleteUser: async (req, res, next) => {
     try {
+      const userLogged = req.userLogged;
       const userId = req.params.userId;
+      
+      const auth = UserService.checkAuth( userLogged, userId);
+
+      if (!auth) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
+        return next(error);
+      }
 
       const user = await UserService.delete(userId);
 

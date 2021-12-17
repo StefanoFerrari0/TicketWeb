@@ -14,7 +14,7 @@ module.exports = {
   },
 
   getById: async (roleId) => {
-    const role = await Role.findById(roleId);
+    const role = await Role.findOne({_id: roleId, isDelete: false});
     return role;
   },
 
@@ -41,4 +41,6 @@ module.exports = {
     const role = await Role.findByIdAndUpdate(roleId, { isDelete: true });
     return role;
   },
+
+
 };

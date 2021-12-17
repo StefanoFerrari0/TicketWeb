@@ -10,7 +10,13 @@ const eventSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
-    unique: false,
+    unique: false
+    
+  },
+
+  location: {
+    type: String,
+    required: true
   },
 
   isDelete: {
@@ -18,10 +24,7 @@ const eventSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
-  batches: {
-    type: mongoose.Types.ObjectId,
-    ref: "batches",
-  },
+  
 });
 
 module.exports = mongoose.model("Event", eventSchema);

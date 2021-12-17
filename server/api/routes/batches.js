@@ -7,13 +7,15 @@ const Middleware = require("../../middlewares/index");
 router.post("/", Middleware.isRole("admin"), BatchesController.createBatch ); 
 
 //GetById
-router.get("/:batchId", BatchesController.getBatchById);
+router.get("/:batchesId", BatchesController.getBatchById);
 
 //GetAll
 router.get("/", BatchesController.getAllBatches);
 
+//GetByName
+router.get("/get-by-event/:eventId",BatchesController.getBatchByEvent)
 //Edit
-router.put("/edit/:batchId", Middleware.isRole("admin"), BatchesController.editBatch); 
+router.put("/edit/:batchesId", Middleware.isRole("admin"), BatchesController.editBatch); 
 
 //Delete
 router.put("/delete/:batchesId", Middleware.isRole("admin"), BatchesController.deleteBatch); 

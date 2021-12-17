@@ -5,14 +5,15 @@ module.exports = {
   createBatch: async (req, res, next) => {
     console.log("createBatch");
     try {
-      const { name, dateFrom, dateTo, price, quantity } = req.body;
+      const { name, dateFrom, dateTo, price, quantity, event } = req.body;
 
       const batch = BatchService.create(
         name,
         dateFrom,
         dateTo,
         price,
-        quantity
+        quantity,
+        event
       );
       if(!batch)
       {
@@ -35,8 +36,8 @@ module.exports = {
   getBatchById: async (req, res, next) => {
     console.log("getBatchById");
     try {
-      const batchId = req.params.batchId;
-      const batch = await BatchService.getById(batchId);
+      const batchesId = req.params.batchesId;
+      const batch = await BatchService.getById(batchesId);
 
       if (!batch) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
@@ -84,11 +85,11 @@ module.exports = {
   editBatch: async (req, res, next) => {
     console.log("editBatch") 
     try {
-      const { name, dateFrom, dateTo, price, quantity } = req.body;
+      const { name, dateFrom, dateTo, price, quantity, event } = req.body;
       
-      const batchId = req.params.batchId;
+      const batchesId = req.params.batchesId;
       
-     if (!batchId) {
+     if (!batchesId) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
         return next(error);
       }
@@ -98,8 +99,9 @@ module.exports = {
         dateTo,
         price,
         quantity,
+        event
       };
-      const batch = await BatchService.edit(batchId,data);
+      const batch = await BatchService.edit(batchesId,data);
       if(!batch){
         const error = new createHttpError.BadRequest("No se modifico la tanda.");
         return next(error);
@@ -128,6 +130,31 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
+      });
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
+  },
+
+  getBatchByEvent: async (req, res, next) => {
+    console.log("getBatchByEvent");
+    try {
+      const eventId = req.params.eventId;
+      const batch = await BatchService.getByEvent(eventId);
+
+      if (!batch) {
+        const error = new createHttpError.BadRequest("No se encontró la relacion de la tanda con el evento.");
+        return next(error);
+      }
+
+      res.status(200).json({
+        ok: true,
+        data: batch,
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {

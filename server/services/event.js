@@ -1,24 +1,26 @@
 const mongoose = require("mongoose");
 const Event = require("../models/eventModel");
-const Batch = require("../models/batchesModel");
+
 
 module.exports = {
-  create: async (name, date, batches) => {
-    const batchesFound = await Batch.find({ name: { $in: batches } });
+  create: async (name, date, location) => {
+    
     let event = new Event({
       _id: new mongoose.Types.ObjectId(),
       name,
       date,
+      location,
       isDelete: false,
-      batches: batchesFound.map((batch) => batch._id),
+      
     });
+    //falta validar el no crear evento con una fecha menor a la actual
     await event.save();
     return event;
   },
 
   
   getById: async (eventId) => {
-    const event = await Event.findById(eventId);
+    const event = await Event.findOne({_id: eventId, isDelete: false});
     return event;
   },
   
