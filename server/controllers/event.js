@@ -6,17 +6,8 @@ module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
-      const { name, date } = req.body;
-      const event = await EventService.create(name, date);
+      const { name, date, location } = req.body;
+      const event = await EventService.create(name, date, location);
       
       if(!event){
         const error = new createHttpError.BadRequest("No se pudo crear el evento.");
@@ -38,15 +29,6 @@ module.exports = {
   getAllEvents: async (req, res, next) => {
     console.log("getAllEvents");
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
       const events = await EventService.getAll();
       
       if(!events){
@@ -120,16 +102,7 @@ module.exports = {
   editEvent: async (req, res, next) => {
     console.log("editEvent"); 
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
-      const {name, date, batches} = req.body;
+      const {name, date, location} = req.body;
       const eventId = req.params.eventId;
       
       if (!eventId) {
@@ -140,7 +113,7 @@ module.exports = {
       const data ={
         name,
         date,
-        
+        location
       };
       const event = await EventService.edit(eventId,data);
       if(!event){
@@ -163,16 +136,7 @@ module.exports = {
   deleteEvent: async (req, res, next) => {
     console.log("deleteEvent");
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
-      const eventId = req.params.eventId;
+     const eventId = req.params.eventId;
 
       const event = await EventService.delete(eventId);
 

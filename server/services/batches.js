@@ -4,7 +4,7 @@ const Event = require("../models/eventModel");
 
 module.exports = {
   create: async (name, dateFrom, dateTo, price, quantity,event) => {
-    const eventFound = await Event.find({ _id: { $in: event } });
+    
     let newBatch = new Batch({
       _id: new mongoose.Types.ObjectId(),
       name,
@@ -12,7 +12,7 @@ module.exports = {
       dateTo,
       price,
       quantity,
-      event: eventFound.map((event) => event._id),
+      event,
       isDelete: false,
     });
     if(newBatch.quantity <= 0 || newBatch.price < 0)
@@ -24,9 +24,7 @@ module.exports = {
   },
 
   getById: async (batchId) => {
-    let batch = await Batch.findById(batchId).populate("event").exec();
-    if(batch.isDelete == true)
-    {batch = false;}
+    const batch = await Batch.findById({_id: batchId, isDeleted: false}).populate('event').exec();
     return batch;
   },
 
@@ -36,7 +34,6 @@ module.exports = {
   },
 
   delete: async (batchId) => {
-    console.log(batchId);
     const batch = await Batch.findByIdAndUpdate(batchId, { isDelete: true });
     return batch;
   },
@@ -48,7 +45,6 @@ module.exports = {
 
   subtractQuantity: async (batchId)=>{
     let batch = await Batch.findById(batchId);
-    console.log(batch.quantity);
     if (batch.quantity < 1){
       return false;
     }
@@ -59,17 +55,16 @@ module.exports = {
   },
 
   addQuantity: async (batchId)=>{
-    const batch = await Batch.findById(batchId)
     
-    const addedBatch = await Batch.findByIdAndUpdate(batch, {quantity: batch.quantity+1});
+    const addedBatch = await Batch.findByIdAndUpdate(batchId, {quantity: batchId.quantity+1});
     return addedBatch;
   },
 
-  getByEvent: async(event)=>{
+  getByEvent: async(eventId)=>{
     const batch = await Batch.find({
-      event:event,
+      event:eventId,
       isDelete: false,
-    }).populate("event");
+    });
     return batch;
   }
 };

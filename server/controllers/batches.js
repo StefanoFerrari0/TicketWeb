@@ -87,9 +87,9 @@ module.exports = {
     try {
       const { name, dateFrom, dateTo, price, quantity, event } = req.body;
       
-      const batchId = req.params.batchId;
+      const batchesId = req.params.batchesId;
       
-     if (!batchId) {
+     if (!batchesId) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
         return next(error);
       }
@@ -101,7 +101,7 @@ module.exports = {
         quantity,
         event
       };
-      const batch = await BatchService.edit(batchId,data);
+      const batch = await BatchService.edit(batchesId,data);
       if(!batch){
         const error = new createHttpError.BadRequest("No se modifico la tanda.");
         return next(error);
@@ -121,8 +121,8 @@ module.exports = {
 
   deleteBatch: async (req, res, next) => {
     try {
-      const batchId = req.params.batchId;
-      const batch = await BatchService.delete(batchId);
+      const batchesId = req.params.batchesId;
+      const batch = await BatchService.delete(batchesId);
       if (!batch) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
         return next(error);
@@ -142,13 +142,13 @@ module.exports = {
   },
 
   getBatchByEvent: async (req, res, next) => {
-    console.log("getEventByName");
+    console.log("getBatchByEvent");
     try {
-      const event = req.params.event;
-      const batch = await BatchService.getByEvent(event);
+      const eventId = req.params.eventId;
+      const batch = await BatchService.getByEvent(eventId);
 
       if (!batch) {
-        const error = new createHttpError.BadRequest("No se encontro el la relacion de la tanda con el evento.");
+        const error = new createHttpError.BadRequest("No se encontró la relacion de la tanda con el evento.");
         return next(error);
       }
 

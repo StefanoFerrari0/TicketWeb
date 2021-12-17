@@ -13,11 +13,11 @@ router.get("/:batchId", BatchesController.getBatchById);
 router.get("/", BatchesController.getAllBatches);
 
 //GetByName
-router.get("/get-by-event/:event",BatchesController.getBatchByEvent)
+router.get("/get-by-event/:eventId",BatchesController.getBatchByEvent)
 //Edit
-router.put("/edit/:batchId", Middleware.isRole("admin"), BatchesController.editBatch); 
+router.put("/edit/:batchesId", Middleware.isRole("admin"), BatchesController.editBatch); 
 
 //Delete
-router.put("/delete/:batchId", Middleware.isRole("admin"), BatchesController.deleteBatch); 
+router.put("/delete/:batchesId", Middleware.isRole("admin"), BatchesController.deleteBatch); 
 
 module.exports = router;

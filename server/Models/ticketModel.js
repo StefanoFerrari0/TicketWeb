@@ -15,7 +15,7 @@ const ticketSchema = new mongoose.Schema(
     },
 
     phone: {
-      type: String,
+      type: Number,
       required: true,
       trim: true,
     },
@@ -38,11 +38,6 @@ const ticketSchema = new mongoose.Schema(
       trim: true,
     },
     
-    qr: {
-      type: String,
-      required: false,
-      trim: true,
-    },
     isDelete: {
       type: Boolean,
       default: false,

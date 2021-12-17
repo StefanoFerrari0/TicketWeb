@@ -1,14 +1,13 @@
 const crypto = require("crypto");
-
+const {SECRET_KEY} = require("../config/index");
 module.exports = {
-    /**/
-
+   
  encrypt : async (text) => {
     const algorithm = 'aes-256-ctr';
-    const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+    
     const iv = crypto.randomBytes(16);
 
-    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+    const cipher = crypto.createCipheriv(algorithm, SECRET_KEY, iv);
 
     const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
 
@@ -20,10 +19,10 @@ module.exports = {
 
  decrypt : async (hash) => {
     const algorithm = 'aes-256-ctr';
-    const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
+    
     const iv = crypto.randomBytes(16);
     
-    const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, 'hex'));
+    const decipher = crypto.createDecipheriv(algorithm, SECRET_KEY, Buffer.from(hash.iv, 'hex'));
 
     const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, 'hex')), decipher.final()]);
 

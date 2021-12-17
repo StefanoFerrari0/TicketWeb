@@ -11,13 +11,13 @@ const batchesSchema = new mongoose.Schema({
   dateFrom: {
     type: Date,
     required: true,
-    unique: true,
+    
   },
 
   dateTo: {
     type: Date,
     required: true,
-    unique: true,
+    
   },
 
   price: {

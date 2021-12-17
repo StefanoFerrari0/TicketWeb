@@ -14,10 +14,7 @@ module.exports = {
   },
 
   getById: async (roleId) => {
-    let  role = await Role.findById(roleId);
-    if (role.isDelete == true){
-      role= false;
-    }
+    const role = await Role.findById({_id: roleId, isDeleted: false});
     return role;
   },
 
@@ -35,6 +32,11 @@ module.exports = {
     return role;
   },
   
+  getByRole: async(role)=>{
+    const roleFound = await Role.find(name);
+    return roleFound
+  },
+
   edit: async (roleId, data) => {
     const role = await Role.findByIdAndUpdate(roleId, data);
     return role;
@@ -44,4 +46,6 @@ module.exports = {
     const role = await Role.findByIdAndUpdate(roleId, { isDelete: true });
     return role;
   },
+
+
 };

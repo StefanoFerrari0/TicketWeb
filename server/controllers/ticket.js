@@ -1,7 +1,6 @@
 const TicketService = require("../services/ticket");
 const EmailService = require("../services/email");
 const createHttpError = require("http-errors");
-const crypt = require("../services/crypt");
 const BatchService = require ("../services/batches");
 const UserService = require("../services/user");
 
@@ -20,10 +19,7 @@ module.exports = {
         state,
         user,
         batches,
-        qr
-        
       } = req.body;
-
       
       const batchQuantity = await BatchService.subtractQuantity(batches);
 
@@ -43,19 +39,16 @@ module.exports = {
         dni,
         state,
         user,
-        batches,
-        qr
+        batches
       );
-       console.log(ticket);
+      
       if(!ticket){
         const error = new createHttpError.BadRequest("No se creó el ticket.");
         return next(error);
       }
-        const Id = toString(ticket._id);
-        const hash = crypt.encrypt(Id);
-        console.log(hash);
-
-     // await EmailService.sendEmail(ticket._id, qr);
+      
+      const qr = await EmailService.createQr(ticket._id, ticket.dni, ticket.name, ticket.lastName)
+      await EmailService.sendEmail(ticket.email, qr);
 
       res.status(200).json({
         ok: true,
@@ -73,20 +66,20 @@ module.exports = {
   getTicketById: async (req, res, next) => {
     console.log("getTicketById");
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
+      
       const ticketId = req.params.ticketId;
       const ticket = await TicketService.getById(ticketId);
 
       if (!ticket) {
         const error = new createHttpError.BadRequest("No se encontró el ticket.");
+        return next(error);
+      }
+
+      const userLogged = req.userLogged;
+      const auth = UserService.checkAuth( userLogged, ticket.user);
+
+      if (auth == false) {
+        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
 
@@ -107,14 +100,7 @@ module.exports = {
   getAllTickets: async (req, res, next) => {
     console.log("getAllTickets")
     try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
+      
 
       const ticket = await TicketService.getAll();
 
@@ -122,7 +108,8 @@ module.exports = {
         const error = new createHttpError.BadRequest("No existen tickets.");
         return next(error);
       }
-
+      
+      
       res.status(200).json({
         ok: true, 
         data: ticket 
@@ -140,15 +127,6 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-      const userLogged = req.userLogged;
-      const userId = req.params.userId;
-      const auth = UserService.checkAuth( userLogged, userId);
-
-      if (auth == false) {
-        const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
-        return next(error);
-      }
-
         const {buyDate, seller, price, email, phone, name, lastName, dni, state, qr, batches, user} = req.body;
         const ticketId = req.params.ticketId;
         
@@ -190,7 +168,7 @@ module.exports = {
     try{
       const ticketId = req.params.ticketId;
       const ticketInfo = await TicketService.getById(ticketId);
-
+      
       if(!ticketInfo){
         const error = new createHttpError.BadRequest("No se encontró el ticket.");
         return next(error);
@@ -241,42 +219,13 @@ module.exports = {
       next(httpError);
     }
   },
-
-  makeQrCode: async (req,res,next)=> {
-    try{
-      const ticketId = req.params.ticketId;
-      const ticket = await TicketService.getById(ticketId);
-      if (!ticket) {
-        const error = new createHttpError.BadRequest("No se encontro el ticket.");
-        return next(error);
-      }
-      
-
-      let qr = await TicketService.createQr(id, dni, name, lastName)
-      const data={qr};
-      await TicketService.edit(ticketId,data);
-      
-      res.status(200).json({
-        ok: true,
-        
-      });
-    }
-    catch{
-      const httpError = createHttpError(500, error, {
-				headers: {
-					"X-Custom-Header": "Value",
-				}
-			});
-      next(httpError);
-    }
-  },
-
+  
   getUserTicket:async (req, res, next) =>{
 
     try {
 
-      const user = req.params.user;
-      const sellerTickets = await TicketService.getAllTicketsSelled(user);
+      const userId = req.params.userId;
+      const sellerTickets = await TicketService.getAllTicketsSelled(userId);
 
       if(!sellerTickets){
         const error = new createHttpError.BadRequest("Este usuario no vendio ningun ticket.");

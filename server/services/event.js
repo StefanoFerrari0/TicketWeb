@@ -3,25 +3,29 @@ const Event = require("../models/eventModel");
 
 
 module.exports = {
-  create: async (name, date) => {
+  create: async (name, date, location) => {
     
     let event = new Event({
       _id: new mongoose.Types.ObjectId(),
       name,
       date,
+      location,
       isDelete: false,
       
     });
+    /*const dateNow = new Date();
+    console.log(dateNow);
+    if(date >= dateNow){
+      console.log("xd");
+      return false;
+    }*/
     await event.save();
     return event;
   },
 
   
   getById: async (eventId) => {
-    let event = await Event.findById(eventId);
-    if (event.isDelete == true){
-      event = false;
-    }
+    const event = await Event.findById({_id: eventId, isDeleted: false});
     return event;
   },
   
