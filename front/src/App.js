@@ -8,7 +8,9 @@ import Login from "./pages/Login";
 import TicketHome from "./pages/Ticket/TicketHome";
 import QrHome from "./pages/QR/QrHome";
 import EventHome from "./pages/Event/EventHome";
+import { EventAddEdit } from "./pages/Event/EventAddEdit";
 import BatchesHome from "./pages/Batches/BatchesHome";
+import { BatchesAddEdit } from "./pages/Batches/BatchesAddEdit";
 import UserHome from "./pages/User/UserHome";
 import { UserAddEdit } from "./pages/User/UserAddEdit";
 import NotFound from "./pages/NotFound";
@@ -32,7 +34,11 @@ function App() {
             <PrivateRoute path="/entradas" nav="Entradas" role='["RRPP", "admin"]' exact component={TicketHome} />
             <PrivateRoute path="/codigo-qr" nav="Código QR" role='["QR"]' exact component={QrHome} />
             <PrivateRoute path="/eventos" exact nav="Eventos" role='["admin"]' component={EventHome} />
+            <PrivateRoute path="/eventos/crear" exact nav="Eventos" role='["admin"]' component={EventAddEdit} />
+            <PrivateRoute path="/eventos/editar/:id" exact nav="Eventos" role='["admin"]' component={EventAddEdit} />
             <PrivateRoute path="/tandas" exact nav="Tandas" role='["admin"]' component={BatchesHome} />
+            <PrivateRoute path="/tandas/crear" exact nav="Tandas" role='["admin"]' component={BatchesAddEdit} />
+            <PrivateRoute path="/tandas/editar/:id" exact nav="Tandas" role='["admin"]' component={BatchesAddEdit} />
             <PrivateRoute path="/usuarios" exact nav="Usuarios" role='["admin"]' component={UserHome} />
             <PrivateRoute path="/usuarios/editar/:id" exact nav="Usuarios" role='["admin"]' component={UserAddEdit} />
             <PrivateRoute path="/usuarios/crear" exact nav="Usuarios" role='["admin"]' component={UserAddEdit} />

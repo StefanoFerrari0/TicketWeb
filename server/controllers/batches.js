@@ -35,7 +35,7 @@ module.exports = {
   getBatchById: async (req, res, next) => {
     console.log("getBatchById");
     try {
-      const batchId = req.params.batchId;
+      const batchId = req.params.batchesId;
       const batch = await BatchService.getById(batchId);
 
       if (!batch) {
@@ -86,7 +86,7 @@ module.exports = {
     try {
       const { name, dateFrom, dateTo, price, quantity } = req.body;
       
-      const batchId = req.params.batchId;
+      const batchId = req.params.batchesId;
       
      if (!batchId) {
         const error = new createHttpError.BadRequest("La tanda no existe.");

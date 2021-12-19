@@ -5,8 +5,8 @@ module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");
     try {
-      const { name, date, batches } = req.body;
-      const event = await EventService.create(name, date, batches);
+      const { name, date } = req.body;
+      const event = await EventService.create(name, date);
       
       if(!event){
         const error = new createHttpError.BadRequest("No se pudo crear el evento.");
@@ -101,26 +101,27 @@ module.exports = {
   editEvent: async (req, res, next) => {
     console.log("editEvent"); 
     try {
-      const {name, date, batches} = req.body;
+      const {name, date} = req.body;
       const eventId = req.params.eventId;
       
       if (!eventId) {
-        const error = new createHttpError.BadRequest("No se modifico el evento.");
+        const error = new createHttpError.BadRequest("No se encontró el evento.");
         return next(error);
       }
       
+      console.log(date);
       const data ={
         name,
         date,
-        batches
       };
-      const event = await EventService.edit(eventId,data);
+      const event = await EventService.edit(eventId, data);
       if(!event){
         const error = new createHttpError.BadRequest("No se modifico la evento.");
         return next(error);
       }
       res.status(201).json({ 
-        ok: true, 
+        ok: true,
+        date: date,
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {

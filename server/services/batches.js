@@ -21,6 +21,11 @@ module.exports = {
     return batch;
   },
 
+  getAllByEvents: async (batchId) => {
+    const batch = await Batch.find({ event: false });
+    return batch;
+  },
+
   getAll: async () => {
     const batch = await Batch.find({ isDelete: false });
     return batch;

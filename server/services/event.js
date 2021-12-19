@@ -3,14 +3,12 @@ const Event = require("../models/eventModel");
 const Batch = require("../models/batchesModel");
 
 module.exports = {
-  create: async (name, date, batches) => {
-    const batchesFound = await Batch.find({ name: { $in: batches } });
+  create: async (name, date) => {
     let event = new Event({
       _id: new mongoose.Types.ObjectId(),
       name,
       date,
       isDelete: false,
-      batches: batchesFound.map((batch) => batch._id),
     });
     await event.save();
     return event;

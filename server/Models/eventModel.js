@@ -18,10 +18,6 @@ const eventSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
-  batches: {
-    type: mongoose.Types.ObjectId,
-    ref: "batches",
-  },
 });
 
 module.exports = mongoose.model("Event", eventSchema);
