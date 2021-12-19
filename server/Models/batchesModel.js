@@ -11,13 +11,11 @@ const batchesSchema = new mongoose.Schema({
   dateFrom: {
     type: Date,
     required: true,
-    unique: true,
   },
 
   dateTo: {
     type: Date,
     required: true,
-    unique: true,
   },
 
   price: {
@@ -35,6 +33,12 @@ const batchesSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  
+  event:{
+    type: mongoose.Types.ObjectId,
+    ref: "Event",
+  },
+  
 });
 
 module.exports = mongoose.model("Batches", batchesSchema);

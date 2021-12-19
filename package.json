@@ -13,6 +13,7 @@
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.5",
     "cookies": "^0.8.0",
+    "crypto": "^1.0.1",
     "express": "^4.17.1",
     "formik": "^2.2.9",
     "http-errors": "^1.7.2",

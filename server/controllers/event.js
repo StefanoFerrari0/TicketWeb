@@ -1,12 +1,13 @@
 const EventService = require("../services/event");
 const createHttpError = require("http-errors");
+const UserService = require("../services/user");
 
 module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");
     try {
-      const { name, date } = req.body;
-      const event = await EventService.create(name, date);
+      const { name, date, location } = req.body;
+      const event = await EventService.create(name, date, location);
       
       if(!event){
         const error = new createHttpError.BadRequest("No se pudo crear el evento.");
@@ -101,7 +102,7 @@ module.exports = {
   editEvent: async (req, res, next) => {
     console.log("editEvent"); 
     try {
-      const {name, date} = req.body;
+      const {name, date, location} = req.body;
       const eventId = req.params.eventId;
       
       if (!eventId) {
@@ -109,10 +110,10 @@ module.exports = {
         return next(error);
       }
       
-      console.log(date);
-      const data ={
+      const data = {
         name,
         date,
+        location
       };
       const event = await EventService.edit(eventId, data);
       if(!event){
@@ -136,7 +137,7 @@ module.exports = {
   deleteEvent: async (req, res, next) => {
     console.log("deleteEvent");
     try {
-      const eventId = req.params.eventId;
+     const eventId = req.params.eventId;
 
       const event = await EventService.delete(eventId);
 

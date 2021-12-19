@@ -1,54 +1,48 @@
 const mongoose = require("mongoose");
-const Batch = require("../models/batchesModel");
-const Event = require("../models/eventModel");
 const Ticket = require("../models/ticketModel");
+const QR = require("qrcode");
+
 
 module.exports = {
   createTicket: async (
     buyDate,
-    seller,
     price,
     email,
     phone,
     name,
-    lastName,
+    surname,
     dni,
-    batches,
-    events,
-    qr
+    user,
+    batches
   ) => {
-    const batchesFound = await Batch.find({ name: { $in: batches } });
-    const eventsFound = await Event.find({ name: { $in: events } });
-
+    
     let newTicket = new Ticket({
       _id: new mongoose.Types.ObjectId(),
       buyDate,
-      seller,
       price,
       email,
       phone,
       name,
-      lastName,
+      surname,
       dni,
-      qr,
       state: true,
-      batches: batchesFound.map((batches) => batches._id),
-      events: eventsFound.map((events) => events._id),
+      user,
+      batches,
       isDeleted: false,
     });
-
-    newTicket.email.trim();
+    
     await newTicket.save();
     return newTicket;
   },
-
+  
+  
   getById: async (ticketId) => {
-    const ticket = await Ticket.findById(ticketId);
+    const ticket = await Ticket.findOne({_id: ticketId, isDelete: false}).populate('batches').exec();
     return ticket;
   },
 
   getAll: async () => {
-    const tickets = await Ticket.find({ isDeleted: false });
+    const tickets = await Ticket.find({ isDelete: false });
     return tickets;
   },
 
@@ -58,9 +52,12 @@ module.exports = {
   },
 
   delete: async (ticketId) => {
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, {
-      isDeleted: true,
-    });
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDelete: true, });
+    return ticket;
+   },
+
+  getAllTicketsSelled:async(userId)=>{
+    const ticket = await Ticket.find({user: userId, isDelete: false});
     return ticket;
   },
 };

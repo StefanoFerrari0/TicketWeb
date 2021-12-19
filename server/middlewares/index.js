@@ -4,20 +4,18 @@ const jwt = require("jsonwebtoken");
 const { TOKEN_SECRET } = require("../config/index");
 
 module.exports = {
-  isRole: function (name) {
+  isRole: function (compareName) {
     return async (req, res, next) => {
       try {
-        const user = req.userLogged;        
-        const roles = user.roles;
         
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === name) {
-            return next();
-          }
+        const name = req.userLogged.roles.name;  
+        
+        if(name === compareName)
+        {
+          return next();
         }
-
         return next(
-          new Error(`Para poder realizar esta acción requiere el rol ${name}.`)
+          new Error(`Para poder realizar esta acción requiere el rol ${compareName}.`)
         );
       } catch (error) {
         next(error);
@@ -49,7 +47,7 @@ module.exports = {
 
         res.locals.userLogged = userLogged;
         req.userLogged = userLogged;
-
+        
         next();
       } else {
         return next(

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
-const Role = require("../models/roleModel");
+
 
 module.exports = {
   create: async (email, password, roles, name, surname) => {
@@ -11,7 +11,7 @@ module.exports = {
       password,
       name,
       surname,
-      roles: [roles],
+      roles,
       isDelete: false,
     });
 
@@ -22,7 +22,8 @@ module.exports = {
   },
 
   getById: async (userId) => {
-    const user = await User.findById(userId).populate("roles").exec();
+    
+    const user = await User.findOne({_id: userId, isDelete: false}).populate('roles').exec();
     return user;
   },
 
@@ -65,5 +66,16 @@ module.exports = {
   delete: async (userId) => {
     const user = await User.findByIdAndUpdate(userId, { isDelete: true });
     return user;
+  },
+  checkAuth: async (userLogged, userId) =>{
+    const isAdmin = userLogged.roles.name === 'admin' ? true : false
+    
+    if (userLogged._id !== userId && isAdmin === false ) {
+      //Necesita ser admin para acceder a la informacion
+      return false;
+    }
+    else{
+      return true;
+    }
   },
 };

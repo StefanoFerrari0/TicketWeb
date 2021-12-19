@@ -12,6 +12,8 @@ router.get("/:batchesId", BatchesController.getBatchById);
 //GetAll
 router.get("/", BatchesController.getAllBatches);
 
+//GetByName
+router.get("/get-by-event/:eventId",BatchesController.getBatchByEvent)
 //Edit
 router.put("/edit/:batchesId", Middleware.isRole("admin"), BatchesController.editBatch); 
 

@@ -5,17 +5,7 @@ const ticketSchema = new mongoose.Schema(
     buyDate: {
       type: Date,
       required: true,
-    },
-
-    seller: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    price: {
-      type: Number,
-      required: true,
+      default: Date.now
     },
 
     email: {
@@ -36,7 +26,7 @@ const ticketSchema = new mongoose.Schema(
       trim: true,
     },
 
-    lastName: {
+    surname: {
       type: String,
       required: true,
       trim: true,
@@ -47,12 +37,7 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
-    qr: {
-      type: String,
-      required: false,
-      trim: true,
-    },
+    
     isDelete: {
       type: Boolean,
       default: false,
@@ -63,14 +48,18 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-    batch: {
-      type: mongoose.Types.ObjectId,
-      ref: "Batch",
-    },
-    event:{
+
+    user:
+      {
       type:mongoose.Types.ObjectId,
-      ref:"Event"
-    }
+      ref:"User"
+      },
+    batches:
+      {
+      type:mongoose.Types.ObjectId,
+      ref:"Batches"
+      },
+    
   },
   {
     timestamps: true,

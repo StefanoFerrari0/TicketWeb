@@ -7,4 +7,5 @@ module.exports = {
   TOKEN_SECRET: process.env.TOKEN_SECRET,
   EMAIL: process.env.EMAIL,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+  SECRET_KEY: process.env.SECRET_KEY,
 };
