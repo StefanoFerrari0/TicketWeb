@@ -6,8 +6,8 @@ module.exports = {
   createEvent: async (req, res, next) => {
     console.log("createEvent");
     try {
-      const { name, date, location } = req.body;
-      const event = await EventService.create(name, date, location);
+      const { name, date, location, active } = req.body;
+      const event = await EventService.create(name, date, location, active);
       
       if(!event){
         const error = new createHttpError.BadRequest("No se pudo crear el evento.");
@@ -99,10 +99,33 @@ module.exports = {
     }
   },
 
+  getAllEventsActives:async(req, res, next)=>{
+    console.log("getAllEventsActives");
+    try {
+      const events = await EventService.getAllActives();   
+
+      if(!events){
+        const error = new createHttpError.BadRequest("No se encontraron eventos.");
+        return next(error);
+      }
+      res.status(200).json({
+        ok: true,
+        data: events,
+      });
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }   
+  },
+
   editEvent: async (req, res, next) => {
     console.log("editEvent"); 
     try {
-      const {name, date, location} = req.body;
+      const {name, date, location, active} = req.body;
       const eventId = req.params.eventId;
       
       if (!eventId) {
@@ -113,7 +136,8 @@ module.exports = {
       const data ={
         name,
         date,
-        location
+        location,
+        active
       };
       const event = await EventService.edit(eventId,data);
       if(!event){
@@ -155,4 +179,6 @@ module.exports = {
       next(httpError);
     }
   },
+
+  
 };

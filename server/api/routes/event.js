@@ -12,6 +12,9 @@ router.get("/:eventId", EventController.getEventId);
 //GetAll
 router.get("/", EventController.getAllEvents);
 
+//GetActives
+router.get("/get/actives/", Middleware.isRole("admin"), EventController.getAllEventsActives);
+
 //Edit
 router.put("/edit/:eventId", Middleware.isRole("admin"), EventController.editEvent);
 
