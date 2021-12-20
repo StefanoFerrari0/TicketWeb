@@ -35,6 +35,11 @@ module.exports = {
     return events;
   },
 
+  getEventLocation: async (eventId)=>{
+    const event = await Event.findOne({_id: eventId, isDelete: false});
+    return event;
+  },  
+
   getByName: async (name) => {
     const event = await Event.findOne({
       name,
@@ -54,4 +59,6 @@ module.exports = {
     const event = await Event.findByIdAndUpdate(eventId, { isDelete: true });
     return event;
   },
+
+  
 };

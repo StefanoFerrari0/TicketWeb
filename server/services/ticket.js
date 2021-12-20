@@ -53,6 +53,11 @@ module.exports = {
     return ticket;
   },
 
+  editState: async (ticketId) =>{
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, { state: false } );
+    return ticket;
+  },
+
   delete: async (ticketId) => {
     const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDelete: true, });
     return ticket;

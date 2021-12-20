@@ -99,6 +99,30 @@ module.exports = {
     }
   },
 
+  getEventLocation: async (req, res, next)=> {
+    console.log("getEventLocation");
+    try {
+      const eventId = req.params.eventId;
+      
+      const event = await EventService.getEventLocation(eventId);
+      
+      if (!event) {
+        const error = new createHttpError.BadRequest("Error al conseguir la ubicación.");
+        return next(error);
+      }
+      res.status(200).json({
+        ok:true,
+        data: event
+      })
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+        headers: {
+          "X-Custom-Header": "Value",
+        }
+      });
+      next(httpError);
+    }
+  },
   getAllEventsActives:async(req, res, next)=>{
     console.log("getAllEventsActives");
     try {
