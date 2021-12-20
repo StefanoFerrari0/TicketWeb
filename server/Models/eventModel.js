@@ -19,6 +19,11 @@ const eventSchema = new mongoose.Schema({
     required: true
   },
 
+  active: {
+    type: Boolean,
+    required: true 
+  },
+
   isDelete: {
     type: Boolean,
     default: false,

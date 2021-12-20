@@ -3,13 +3,14 @@ const Event = require("../models/eventModel");
 
 
 module.exports = {
-  create: async (name, date, location) => {
+  create: async (name, date, location, active) => {
     
     let event = new Event({
       _id: new mongoose.Types.ObjectId(),
       name,
       date,
       location,
+      active,
       isDelete: false,
       
     });
@@ -24,6 +25,11 @@ module.exports = {
     return event;
   },
   
+  getAllActives: async ()=>{
+      const events = await Event.find({active:true, isDelete: false});
+      return events;
+  },
+
   getAll: async () => {
     const events = await Event.find({ isDelete: false });
     return events;
@@ -33,6 +39,7 @@ module.exports = {
     const event = await Event.findOne({
       name,
       isDelete: false,
+      
     }).populate("Event");
 
     return event;
