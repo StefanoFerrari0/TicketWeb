@@ -15,7 +15,8 @@ module.exports = {
       event,
       isDelete: false,
     });
-    if(newBatch.quantity <= 0 || newBatch.price < 0)
+    
+    if(newBatch.quantity <= 0 || newBatch.price <= 0)
     {
       return false;
     }
