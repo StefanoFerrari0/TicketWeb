@@ -48,7 +48,10 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-
+    isPay:{
+      type: Boolean,
+      default:false
+    },
     user:
       {
       type:mongoose.Types.ObjectId,

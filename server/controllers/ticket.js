@@ -97,7 +97,7 @@ module.exports = {
       next(httpError);
     }
   },
-
+  
   getAllTickets: async (req, res, next) => {
     console.log("getAllTickets")
     try {
@@ -128,7 +128,7 @@ module.exports = {
   editTicket: async (req, res, next) => {
     console.log("editTicket")  
       try {
-        const {buyDate, seller, price, email, phone, name, surname, dni, state, batches, user} = req.body;
+        const {buyDate, seller, price, email, phone, name, surname, dni, state, isPay, batches, user} = req.body;
         const ticketId = req.params.ticketId;
         
       const data = {
@@ -141,6 +141,7 @@ module.exports = {
         surname,
         dni,
         state,
+        isPay,
         batches,
         user
       };
