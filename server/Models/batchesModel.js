@@ -15,7 +15,6 @@ const batchesSchema = new mongoose.Schema({
   dateTo: {
     type: Date,
     required: true,
-    
   },
 
   price: {
@@ -23,7 +22,6 @@ const batchesSchema = new mongoose.Schema({
     required: true,
   },
 
-  
   isDelete: {
     type: Boolean,
     default: false,
@@ -34,6 +32,7 @@ const batchesSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  
   event:{
     type: mongoose.Types.ObjectId,
     ref: "Event",
