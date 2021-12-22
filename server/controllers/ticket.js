@@ -29,6 +29,8 @@ module.exports = {
         return next(error);
       }
 
+      const lastUserEdit = req.userLogged;
+
       const ticket = await TicketService.createTicket(
         buyDate,
         price,
@@ -39,7 +41,8 @@ module.exports = {
         dni,
         state,
         user,
-        batches
+        batches,
+        lastUserEdit
       );
       
       if(!ticket){
@@ -130,7 +133,7 @@ module.exports = {
       try {
         const {buyDate, seller, price, email, phone, name, surname, dni, state, isPay, batches, user} = req.body;
         const ticketId = req.params.ticketId;
-        
+        const lastUserEdit = req.userLogged;
       const data = {
         buyDate,
         seller,
@@ -143,7 +146,8 @@ module.exports = {
         state,
         isPay,
         batches,
-        user
+        user,
+        lastUserEdit
       };
         const ticket = await TicketService.edit(ticketId, data);
 
@@ -201,13 +205,15 @@ module.exports = {
       
       const ticket = await TicketService.delete(ticketId);
       
+      const lastUserEdit = req.userLogged;
+
       if (!ticket) {
         const error = new createHttpError.BadRequest("No se borró el ticket.");
         return next(error);
       }
       
       const batch = ticketFound.batches;
-      await BatchService.addQuantity(batch);
+      await BatchService.addQuantity(batch, lastUserEdit);
 
       res.status(200).json({ 
         ok: true, 

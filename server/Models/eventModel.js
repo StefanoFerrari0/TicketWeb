@@ -24,6 +24,11 @@ const eventSchema = new mongoose.Schema({
     required: true 
   },
 
+  lastUserEdit: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
+  
   isDelete: {
     type: Boolean,
     default: false,

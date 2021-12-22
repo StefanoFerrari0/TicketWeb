@@ -23,12 +23,17 @@ const userSchema = new mongoose.Schema(
     accessToken: {
       type: String,
     },
-    roles: 
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Role",
-      },
+    roles: {
+      type: mongoose.Types.ObjectId,
+      ref: "Role",
+    },
     
+    lastUserEdit: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: false
+    },
+
     isDelete: {
       type: Boolean,
       default: false,

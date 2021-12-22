@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 
 
 module.exports = {
-  create: async (email, password, roles, name, surname) => {
+  create: async (email, password, roles, name, surname, lastUserEdit) => {
 
     let newUser = new User({
       _id: new mongoose.Types.ObjectId(),
@@ -12,6 +12,7 @@ module.exports = {
       name,
       surname,
       roles,
+      lastUserEdit,
       isDelete: false,
     });
 
@@ -39,12 +40,17 @@ module.exports = {
   },
 
   getAll: async () => {
-    const users = await User.find({ isDelete: false }).populate("roles").exec();
+    const users = await User.find({ isDelete: false });
 
     return users;
   },
 
   edit: async (userId, data) => {
+    const user = await User.findByIdAndUpdate(userId, data, {lastUserEdit: data.lastUserEdit});
+    return user;
+  },
+
+  updateToken:async (userId, data) =>{
     const user = await User.findByIdAndUpdate(userId, data);
     return user;
   },
@@ -63,11 +69,12 @@ module.exports = {
     return await User.comparePassword(oldPassword, newPassword);
   },
 
-  delete: async (userId) => {
-    const user = await User.findByIdAndUpdate(userId, { isDelete: true });
+  delete: async (userId, lastUserEdit) => {
+    const user = await User.findByIdAndUpdate(userId, { isDelete: true, lastUserEdit: lastUserEdit });
     return user;
   },
   checkAuth: async (userLogged, userId) =>{
+    console.log(userLogged); 
     const isAdmin = userLogged.roles.name === 'admin' ? true : false
     
     if (userLogged._id !== userId && isAdmin === false ) {

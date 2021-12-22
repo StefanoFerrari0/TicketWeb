@@ -13,8 +13,8 @@ module.exports = {
         const error = new createHttpError.BadRequest("Ya existe un rol.");
         return next(error);
       }
-
-     await RoleService.create(name);
+      const lastUserEdit = req.userLogged._id;
+     await RoleService.create(name, lastUserEdit);
 
       res.status(200).json({
         ok: true,
@@ -83,8 +83,9 @@ module.exports = {
     try {
       const { name } = req.body;
       const roleId = req.params.roleId;
-      const data = {name};
+      const lastUserEdit = req.userLogged._id;
       
+      const data = {name, lastUserEdit};
       const role = await RoleService.edit(roleId,data);
 
       if(!role){
@@ -106,7 +107,8 @@ module.exports = {
     console.log("deleteRole");
     try {
       const roleId = req.params.roleId;
-      const role = await RoleService.delete(roleId);
+      const lastUserEdit = req.userLogged._id;
+      const role = await RoleService.delete(roleId, lastUserEdit);
 
       if (!role) {
         const error = new createHttpError.BadRequest("No se pudo borrar el rol.");

@@ -6,14 +6,15 @@ module.exports = {
     console.log("createBatch");
     try {
       const { name, dateFrom, dateTo, price, quantity, event } = req.body;
-
+      const lastUserEdit = req.userLogged._id;
       const batch = BatchService.create(
         name,
         dateFrom,
         dateTo,
         price,
         quantity,
-        event
+        event,
+        lastUserEdit
       );
       if(!batch)
       {
@@ -86,7 +87,7 @@ module.exports = {
     console.log("editBatch") 
     try {
       const { name, dateFrom, dateTo, price, quantity, event } = req.body;
-      
+      const lastUserEdit = req.userLogged._id;
       const batchesId = req.params.batchesId;
       
      if (!batchesId) {
@@ -99,7 +100,8 @@ module.exports = {
         dateTo,
         price,
         quantity,
-        event
+        event,
+        lastUserEdit
       };
       const batch = await BatchService.edit(batchesId,data);
       if(!batch){
@@ -122,7 +124,8 @@ module.exports = {
   deleteBatch: async (req, res, next) => {
     try {
       const batchesId = req.params.batchesId;
-      const batch = await BatchService.delete(batchesId);
+      const lastUserEdit = req.userLogged._id;
+      const batch = await BatchService.delete(batchesId, lastUserEdit);
       if (!batch) {
         const error = new createHttpError.BadRequest("La tanda no existe.");
         return next(error);

@@ -3,7 +3,7 @@ const Event = require("../models/eventModel");
 
 
 module.exports = {
-  create: async (name, date, location, active) => {
+  create: async (name, date, location, active, lastUserEdit) => {
     
     let event = new Event({
       _id: new mongoose.Types.ObjectId(),
@@ -11,6 +11,7 @@ module.exports = {
       date,
       location,
       active,
+      lastUserEdit,
       isDelete: false,
       
     });
@@ -21,7 +22,7 @@ module.exports = {
 
   
   getById: async (eventId) => {
-    const event = await Event.findOne({_id: eventId, isDelete: false});
+    const event = await Event.findOne({_id: eventId, isDelete: false}).populate('lastUserEdit').exec();
     return event;
   },
   
@@ -31,7 +32,7 @@ module.exports = {
   },
 
   getAll: async () => {
-    const events = await Event.find({ isDelete: false });
+    const events = await Event.find({ isDelete: false }).populate('lastUserEdit').exec();
     return events;
   },
 
@@ -51,12 +52,12 @@ module.exports = {
   },
   
   edit: async (eventId, data) => {
-    const event = await Event.findByIdAndUpdate(eventId, data);
+    const event = await Event.findByIdAndUpdate(eventId, data, {lastUserEdit:data.lastUserEdit});
     return event;
   },
 
-  delete: async (eventId) => {
-    const event = await Event.findByIdAndUpdate(eventId, { isDelete: true });
+  delete: async (eventId, lastUserEdit) => {
+    const event = await Event.findByIdAndUpdate(eventId, { isDelete: true, lastUserEdit: lastUserEdit });
     return event;
   },
 

@@ -3,7 +3,7 @@ const Batch = require("../models/batchesModel");
 const Event = require("../models/eventModel");
 
 module.exports = {
-  create: async (name, dateFrom, dateTo, price, quantity,event) => {
+  create: async (name, dateFrom, dateTo, price, quantity, event, lastUserEdit) => {
     
     let newBatch = new Batch({
       _id: new mongoose.Types.ObjectId(),
@@ -13,6 +13,7 @@ module.exports = {
       price,
       quantity,
       event,
+      lastUserEdit,
       isDelete: false,
     });
     
@@ -34,13 +35,13 @@ module.exports = {
     return batch;
   },
 
-  delete: async (batchId) => {
-    const batch = await Batch.findByIdAndUpdate(batchId, { isDelete: true });
+  delete: async (batchId, lastUserEdit) => {
+    const batch = await Batch.findByIdAndUpdate(batchId, { isDelete: true, lastUserEdit: lastUserEdit});
     return batch;
   },
 
   edit: async (batchId, data) => {
-    const batch = await Batch.findByIdAndUpdate(batchId, data);
+    const batch = await Batch.findByIdAndUpdate(batchId, data ,{lastUserEdit: data.lastUserEdit});
     return batch;
   },
 

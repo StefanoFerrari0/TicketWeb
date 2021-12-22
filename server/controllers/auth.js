@@ -31,7 +31,7 @@ module.exports = {
       user.accessToken = token;
 
       const data = user;
-      await UserService.edit(data);
+      await UserService.updateToken(data);
 
       res.cookie("accessToken", token, {
         expires: new Date(Date.now() + 86400000),

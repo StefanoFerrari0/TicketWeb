@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 const Role = require("../models/roleModel");
 
 module.exports = {
-  create: async (name) => {
+  create: async (name, lastUserEdit) => {
     let role = new Role({
       _id: new mongoose.Types.ObjectId(),
       name,
+      lastUserEdit,
       isDelete: false,
     });
 
@@ -33,12 +34,12 @@ module.exports = {
   },
   
   edit: async (roleId, data) => {
-    const role = await Role.findByIdAndUpdate(roleId, data);
+    const role = await Role.findByIdAndUpdate(roleId, data, {lastUserEdit: data.lastUserEdit});
     return role;
   },
 
-  delete: async (roleId) => {
-    const role = await Role.findByIdAndUpdate(roleId, { isDelete: true });
+  delete: async (roleId, lastUserEdit) => {
+    const role = await Role.findByIdAndUpdate(roleId, { isDelete: true, lastUserEdit: lastUserEdit });
     return role;
   },
 

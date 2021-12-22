@@ -52,6 +52,12 @@ const ticketSchema = new mongoose.Schema(
       type: Boolean,
       default:false
     },
+
+    lastUserEdit: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+    
     user:
       {
       type:mongoose.Types.ObjectId,

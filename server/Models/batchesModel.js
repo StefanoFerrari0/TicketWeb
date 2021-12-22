@@ -32,6 +32,11 @@ const batchesSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+
+  lastUserEdit: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
   
   event:{
     type: mongoose.Types.ObjectId,

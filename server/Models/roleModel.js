@@ -6,6 +6,12 @@ const roleSchema = new mongoose.Schema({
     trim: true,
     unique: true,
   },
+
+  lastUserEdit: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
+  },
+  
   isDelete: {
     type: Boolean,
     default: false,

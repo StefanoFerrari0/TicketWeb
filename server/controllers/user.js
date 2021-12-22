@@ -6,7 +6,8 @@ module.exports = {
     console.log("createUser");
     try {
       const { email, roles, name, surname } = req.body;
-
+      const lastUserEdit = req.userLogged._id;
+      console.log(lastUserEdit);
       if(!roles){
         const error = new createHttpError.BadRequest("No ingresó ningun rol.");
         return next(error);
@@ -24,7 +25,7 @@ module.exports = {
 
 
 
-      await UserService.create(email, password, roles, name, surname);
+      await UserService.create(email, password, roles, name, surname, lastUserEdit);
 
       res.status(200).json({
         ok: true,
@@ -113,12 +114,13 @@ module.exports = {
         const error = new createHttpError.BadRequest("Necesita ser admin para editar la informacion de otro usuario.");
         return next(error);
       }
-
+      const lastUserEdit = req.userLogged._id;
       const data = {
         email,
         roles,
         name,
         surname,
+        lastUserEdit
       };
 
       await UserService.edit(userId, data);
@@ -209,8 +211,8 @@ module.exports = {
         const error = new createHttpError.BadRequest("Necesita ser admin para acceder a la informacion.");
         return next(error);
       }
-
-      const user = await UserService.delete(userId);
+      const lastUserEdit = req.userLogged._id;
+      const user = await UserService.delete(userId, lastUserEdit);
 
       res.status(200).json({
         ok: true,

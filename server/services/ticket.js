@@ -13,7 +13,8 @@ module.exports = {
     surname,
     dni,
     user,
-    batches
+    batches,
+    lastUserEdit
   ) => {
     
     let newTicket = new Ticket({
@@ -29,6 +30,7 @@ module.exports = {
       isPay: false,
       user,
       batches,
+      lastUserEdit,
       isDeleted: false,
 
     });
@@ -49,7 +51,7 @@ module.exports = {
   },
 
   edit: async (ticketId, data) => {
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, data);
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, data, {lastUserEdit: data.lastUserEdit});
     return ticket;
   },
 
@@ -58,8 +60,8 @@ module.exports = {
     return ticket;
   },
 
-  delete: async (ticketId) => {
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDelete: true, });
+  delete: async (ticketId, lastUserEdit) => {
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, {  isDelete: true, lastUserEdit: lastUserEdit });
     return ticket;
    },
 
