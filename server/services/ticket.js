@@ -24,9 +24,11 @@ module.exports = {
       surname,
       dni,
       state: true,
+      isPay: false,
       user,
       batches,
       isDeleted: false,
+
     });
 
     await newTicket.save();
