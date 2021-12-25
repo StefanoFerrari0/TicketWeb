@@ -2,15 +2,19 @@ import http from "../http-common";
 
 class BatchesService {
   create(data) {
-    return http.post("/batches/", data);
+    return http.post(`/batches/`, data);
   }
 
   getById(batchesId) {
     return http.get(`/batches/${batchesId}`);
   }
 
+  getByEvent(eventId){
+    return http.get(`/batches/get-by-event/${eventId}`)
+  }
+  
   getAll() {
-    return http.get("/batches/");
+    return http.get(`/batches/`);
   }
 
   edit(batchesId, data) {

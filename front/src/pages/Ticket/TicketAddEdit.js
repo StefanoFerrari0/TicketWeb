@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useFormik } from "formik";
-import BatchesService from "../../api/services/batches.service";
+import TicketService from "../../api/services/user.service";
 import EventService from "../../api/services/event.service";
+import BatchesService from "../../api/services/batches.service";
 import moment from "moment";
-import { disabled } from "express/lib/application";
 
 const validate = (values) => {
   const errors = {};
@@ -13,95 +13,120 @@ const validate = (values) => {
     errors.name = "Requerido.";
   }
 
-  if (!values.dateFrom) {
-    errors.dateFrom = "Requerido.";
-  } else if (values.dateFrom > values.dateTo){
-    errors.dateFrom = "La fecha de inicio no puede ser mayor que la fecha de finalización del evento";
+  if (!values.surname) {
+    errors.surname = "Requerido.";
+  } else if (values.surname.length < 3) {
+    errors.surname = "El apellido debe tener al menos 3 caracteres.";
+  }
+
+  if (!values.email) {
+    errors.email = "Requerido";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = "Email inválido.";
+  }
+
+  if(!values.phone) {
+    errors.surname = "Requerido.";
+  } if (values.phone.length > 10){
+    errors.phone = "El número del teléfono no puede ser mayor a 10 cáracteres";
+  } else if (!/^\d+$/.test(values.phone)) {
+    errors.phone = "Teléfono inválido.";
   }
 
   if (!values.event) {
     errors.event = "Requerido.";
   }
 
-  if (!values.dateTo) {
-    errors.dateTo = "Requerido.";
-  }else if (values.dateTo < values.dateFrom){
-    errors.dateTo = "La fecha de finalización no puede ser menor que la fecha de inicio del evento";
+  if (!values.batches) {
+    errors.batches = "Requerido.";
   }
 
-  if(values.quantity < 0){
-    errors.quantity = "La cantidad no puede ser menor a 0(CERO).";
+  if(values.quantity <= 0){
+    errors.quantity = "El campo no puede ser menor o igual a 0 (CERO).";
   }
-
-  if (!values.price) {
-    errors.price = "Requerido.";
-  } else if(values.price < 0){
-    errors.price = "El precio no puede ser menor a 0(CERO).";
-  }
-
   return errors;
 };
 
-function BatchesAddEdit({ history, match }) {
+function TicketAddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;
-  const [batch, setBatch] = useState(null);
-  const [batchError, setBatchError] = useState(null);
+  const [ticket, setTicket] = useState(null);
+  const [ticketError, setTicketError] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [allBatches, setAllBatches] = useState([]);
+  const [activeBatches, setActiveBatches] = useState({});
 
   const formik = useFormik({
     initialValues: {
-        name: "",
-        dateFrom: "",
-        dateTo: "",
-        event: "",
-        quantity: 0,
-        price: 0,
+      email: "",
+      name: "",
+      surname: "",
+      phone: "",
+      dni: "",
+      event: "",
+      batches: "",
+      quantity: 1,
     },
     validate,
 
-    onSubmit: ({ name, dateFrom, dateTo, event, quantity, price, setFieldValue }) => {
-      quantity = !isChecked ? null : quantity;
+    onSubmit: ({ email, name, surname, phone, dni, event, batches, quantity, setFieldValue }) => {
       const data = {
+        email,
         name,
-        dateFrom,
-        dateTo,
+        surname,
+        phone,
+        dni, 
         event,
-        quantity,
-        price
+        batches
       };
 
       if (isAddMode) {
-        createBatches(data);
+        createTicket(data);
       } else {
-        updateBatches(id, data);
+        updateTicket(id, data);
       }
     },
   });
 
-  function createBatches(data) {
-    BatchesService.create(data)
+  function createTicket(data) {
+    TicketService.create(data)
       .then(() => {
-        console.log("La tanda fue creada.");
-        history.push("/tandas");
+        console.log("El ticket fue creado.");
+        history.push("/entradas");
       })
       .catch((error) => {
         if (error.response) {
-          setBatchError(error.response.data.message.message);
+          setTicketError(error.response.data.message.message);
         }
       });
   }
 
-  function updateBatches(batchesId, data) {
-    BatchesService.edit(batchesId, data)
+  function updateTicket(ticketId, data) {
+    TicketService.edit(ticketId, data)
       .then(() => {
-        console.log("La tanda fue editada.");
-        history.push("/tandas");
+        console.log("El ticket fue editado.");
+        history.push("/");
       })
       .catch((error) => {
         if (error.response) {
-          setBatchError(error.response.data.message.message);
+          setTicketError(error.response.data.message.message);
+        }
+      });
+  }
+
+  function getAllBatchesByEvent(eventId) {
+    BatchesService.getByEvent(eventId)
+    .then((res) => {
+      if (res.data.ok) {
+        setAllBatches(res.data.data);
+        setTicketError(null);
+      }
+      })
+      .catch((error) => {
+        if (error.response){
+          setTicketError(error.response.data.message.message);
+          setAllBatches([]);
+          setActiveBatches({});
         }
       });
   }
@@ -114,23 +139,22 @@ function BatchesAddEdit({ history, match }) {
     });
 
     if (!isAddMode) {
-      BatchesService.getById(id).then((res) => {
+      TicketService.getById(id).then((res) => {
         if (res.data.ok) {
-          const fields = ["name", "dateTo", "dateFrom", "event", "price", "quantity"];
-          const { _id } = res.data.data.event;
-          res.data.data.dateFrom = moment.utc(res.data.data.dateFrom).format("YYYY-MM-DD");
-          res.data.data.dateTo = moment.utc(res.data.data.dateTo).format("YYYY-MM-DD");
-
+          const fields = ["email", "name", "surname", "phone", "dni", "event", "batches"];
           fields.forEach((field) => {
             formik.setFieldValue(field, res.data.data[field], false);
 
             if (field === "event") {
-              formik.setFieldValue(field, _id, false);
+              formik.setFieldValue(field, res.data.data.event._id, false);
+            }
+
+            if (field === "batches") {
+              formik.setFieldValue(field, res.data.data.batches._id, false);
             }
           });
 
-          setIsChecked(res.data.data.quantity ? true : false)
-          setBatch(res.data.data);
+          setTicket(res.data.data);
         }
       });
     }
@@ -146,12 +170,12 @@ function BatchesAddEdit({ history, match }) {
           <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
             <div>
               <h3 className="text-xl leading-6 font-medium text-gray-900">
-                {isAddMode ? "Crear tanda" : "Editar tanda"}
-                {batchError ? (
-                  <span className="mx-2 text-red-600">×{batchError}</span>
+                {isAddMode ? "Crear entrada" : "Editar entrada"}
+                {ticketError ? (
+                  <span className="mx-2 text-red-600">×{ticketError}</span>
                 ) : null}
               </h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">El campo stock es opcional. Tenga en cuenta que una vez creada la tanda, los campos Precio y Evento no podrán ser editados, estos mantendran sus valores para siempre.</p>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">Las entradas una vez creadas no pueden ser editadas, solamente por un administrador. Teniendo esto en cuenta, cercionarse de introducir bien todos los datos, sobretodo el email, ya que al crearse la entrada se le enviará un email con un código QR.</p>
             </div>
             <div className="space-y-6 sm:space-y-5">
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -171,6 +195,7 @@ function BatchesAddEdit({ history, match }) {
                     type="text"
                     name="name"
                     id="name"
+                    autoComplete="given-name"
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                     required
                     onChange={formik.handleChange}
@@ -182,52 +207,80 @@ function BatchesAddEdit({ history, match }) {
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label
-                  htmlFor="dateFrom"
+                  htmlFor="surname"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
-                  Fecha desde
-                  {formik.touched.dateFrom && formik.errors.dateFrom ? (
+                  Apellido
+                  {formik.touched.surname && formik.errors.surname ? (
                     <span className="mx-2 text-red-600">
-                      ×{formik.errors.dateFrom}
+                      ×{formik.errors.surname}
                     </span>
                   ) : null}
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-                <input
-                    type="date"
-                    name="dateFrom"
-                    id="dateFrom"
+                  <input
+                    type="text"
+                    name="surname"
+                    id="surname"
+                    autoComplete="family-name"
                     required
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.dateFrom}
+                    value={formik.values.surname}
                   />
                 </div>
               </div>
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label
-                  htmlFor="dateTo"
+                  htmlFor="email"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
-                  Fecha hasta
-                  {formik.touched.dateTo && formik.errors.dateTo ? (
+                  Email
+                  {formik.touched.email && formik.errors.email ? (
                     <span className="mx-2 text-red-600">
-                      ×{formik.errors.dateTo}
+                      ×{formik.errors.email}
                     </span>
                   ) : null}
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-                    <input
-                    type="date"
-                    name="dateTo"
-                    id="dateTo"
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
                     required
-                    className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                    autoComplete="email"
+                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.dateTo}
+                    value={formik.values.email}
+                  />
+                </div>
+              </div>
+
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                >
+                  Número de telefono
+                  {formik.touched.phone && formik.errors.phone ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.phone}
+                    </span>
+                  ) : null}
+                </label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="text"
+                    required
+                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.phone}
                   />
                 </div>
               </div>
@@ -248,70 +301,76 @@ function BatchesAddEdit({ history, match }) {
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <select
                     id="event"
-                    name="event" 
+                    name="event"
+                    className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                    onChange={(e) => {
+                      formik.setFieldValue("event", e.target.value);
+                      getAllBatchesByEvent(e.target.value);
+                    }}
                     required
-                    className={`${!isAddMode ? "bg-gray-400" : ""} max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md`}
-                    onChange={formik.handleChange}
-                    disabled={!isAddMode ? true : false}
                     onBlur={formik.handleBlur}
                     value={formik.values.event}
                   >
                     <option value="">Elegí un evento</option>
                     {allEvents &&
                       allEvents.map((event, index) => {
-                          
                         return (
                           <option key={event._id} value={event._id}>
-                            {event.name + " - " + moment.utc(event.date).format("DD/MM/YYYY")}
+                            {event.name}
                           </option>
                         );
                       })}
                   </select>
                 </div>
-
               </div>
 
+              
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label
-                  htmlFor="price"
+                  htmlFor="batches"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
-                  Precio
-                  {formik.touched.price && formik.errors.price ? (
+                  Tanda
+                  {formik.touched.batches && formik.errors.batches ? (
                     <span className="mx-2 text-red-600">
-                      ×{formik.errors.price}
+                      ×{formik.errors.batches}
                     </span>
                   ) : null}
                 </label>
+
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
+                  <select
+                    id="batches"
+                    name="batches"
                     required
-                    className={`${!isAddMode ? "bg-gray-400" : ""} max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md`}
-                    disabled={!isAddMode ? true : false}
-                    onChange={formik.handleChange}
+                    className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                    onChange={(e) => {
+                      formik.setFieldValue("batches", e.target.value);
+                      const filterBatches = allBatches.filter((batch) => batch._id === e.target.value);
+                      setActiveBatches(filterBatches[0]);
+                    }}
                     onBlur={formik.handleBlur}
-                    value={formik.values.price}
-                  />
+                    value={formik.values.batches}
+                  >
+                    <option value="">Elegí una tanda</option>
+                    {allBatches &&
+                      allBatches.map((batch, index) => {
+                        return (
+                          <option key={batch._id} value={batch._id}>
+                            {batch.name} - Desde {moment.utc(batch.dateFrom).format("DD/MM/YYYY")} hasta {moment.utc(batch.dateTo).format("DD/MM/YYYY")} - ${batch.price}
+                          </option>
+                        );
+                      })}
+                  </select>
                 </div>
               </div>
               
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label
-                  htmlFor="stock"
+                  htmlFor="quantity"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
-                  ¿Tiene stock?
-                  <input
-                    type="checkbox"
-                    id="checkbox"
-                    name="checkbox"
-                    onChange={() => setIsChecked(!isChecked) }
-                    checked={isChecked}
-                    className="mx-2"      
-                  />
+                  Cantidad de entradas a vender ({activeBatches && activeBatches.quantity ? "Stock: " + activeBatches.quantity : "Stock ilimitado"})
                   {formik.touched.quantity && formik.errors.quantity ? (
                     <span className="mx-2 text-red-600">
                       ×{formik.errors.quantity}
@@ -320,11 +379,13 @@ function BatchesAddEdit({ history, match }) {
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
-                    type="number"
-                    name="quantity"
                     id="quantity"
-                    className={`${!isChecked? "bg-gray-400" : ""} max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md`}
-                    disabled={!isChecked ? true : false}
+                    name="quantity"
+                    type="number"
+                    required
+                    min={1}
+                    max={activeBatches && activeBatches.quantity ? activeBatches.quantity : 9999}
+                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.quantity}
@@ -356,4 +417,4 @@ function BatchesAddEdit({ history, match }) {
   );
 }
 
-export { BatchesAddEdit };
+export { TicketAddEdit };

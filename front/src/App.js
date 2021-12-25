@@ -5,7 +5,7 @@ import PrivateRoute from "./pages/ProtectedRoute";
 //Pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import TicketHome from "./pages/Ticket/TicketHome";
+import { TicketAddEdit } from "./pages/Ticket/TicketAddEdit";
 import QrHome from "./pages/QR/QrHome";
 import EventHome from "./pages/Event/EventHome";
 import { EventAddEdit } from "./pages/Event/EventAddEdit";
@@ -31,8 +31,9 @@ function App() {
           <Switch>
             <Route path="/login" exact component={Login} />
             <PrivateRoute path="/" exact nav="Dashboard" component={Home} />
-            <PrivateRoute path="/entradas" nav="Entradas" role='["RRPP", "admin"]' exact component={TicketHome} />
-            <PrivateRoute path="/codigo-qr" nav="Código QR" role='["QR"]' exact component={QrHome} />
+            <PrivateRoute path="/entradas/crear" nav="Entradas" role='["RRPP", "admin"]' exact component={TicketAddEdit} />
+            <PrivateRoute path="/entradas/edit/:id" nav="Entradas" role='["RRPP", "admin"]' exact component={TicketAddEdit} />
+            <PrivateRoute path="/codigo-qr" nav="Código QR" role='["QR", "admin"]' exact component={QrHome} />
             <PrivateRoute path="/eventos" exact nav="Eventos" role='["admin"]' component={EventHome} />
             <PrivateRoute path="/eventos/crear" exact nav="Eventos" role='["admin"]' component={EventAddEdit} />
             <PrivateRoute path="/eventos/editar/:id" exact nav="Eventos" role='["admin"]' component={EventAddEdit} />

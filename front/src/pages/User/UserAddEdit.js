@@ -94,7 +94,7 @@ function UserAddEdit({ history, match }) {
       UserService.getById(id).then((res) => {
         if (res.data.ok) {
           const fields = ["email", "name", "surname", "roles"];
-          const { _id } = res.data.data.roles[0];
+          const { _id } = res.data.data.roles;
           fields.forEach((field) => {
             formik.setFieldValue(field, res.data.data[field], false);
 

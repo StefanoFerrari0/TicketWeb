@@ -23,7 +23,7 @@ const navigation = [
   },
   {
     name: "Entradas",
-    href: "/entradas",
+    href: "/entradas/crear",
     icon: TicketIcon,
     current: false,
     role: ["RRPP", "admin"],
@@ -133,7 +133,7 @@ export default function Sidebar(props) {
                         item.current = true;
                       }
 
-                      const userRole = props.user.roles[0].name;
+                      const userRole = props.user.roles.name;
                       const isRol = item.role.find(
                         (element) => element === userRole
                       );
@@ -209,7 +209,7 @@ export default function Sidebar(props) {
                     item.current = true;
                   }
 
-                  const userRole = props.user.roles[0].name;
+                  const userRole = props.user.roles.name;
 
                   const isRol = item.role.find(
                     (element) => element === userRole

@@ -5,17 +5,17 @@ const ticketSchema = new mongoose.Schema(
     buyDate: {
       type: Date,
       required: true,
-      default: Date.now
+      default: Date.now,
     },
 
     email: {
-      type:String,
+      type: String,
       required: true,
       trim: true,
     },
 
     phone: {
-      type: Number,
+      type: String,
       required: true,
       trim: true,
     },
@@ -37,29 +37,30 @@ const ticketSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    
-    isDelete: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
+
     state: {
       type: Boolean,
       required: true,
       default: false,
     },
 
-    user:
-      {
-      type:mongoose.Types.ObjectId,
-      ref:"User"
-      },
-    batches:
-      {
-      type:mongoose.Types.ObjectId,
-      ref:"Batches"
-      },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     
+    batches: {
+      type: mongoose.Types.ObjectId,
+      ref: "Batches",
+      required: true,
+    },
+
+    isDelete: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   {
     timestamps: true,

@@ -32,7 +32,7 @@ module.exports = {
     const event = await Event.findOne({
       name,
       isDelete: false,
-    }).populate("Event");
+    })
 
     return event;
   },

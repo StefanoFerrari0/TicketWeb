@@ -31,7 +31,7 @@ export default function BatchesHome() {
     fetchData();
   }, []);
 
-  const deleteUser = async (batchesId) => {
+  const deleteBatches = async (batchesId) => {
     await BatchesService.delete(batchesId)
       .then((res) => {
         if (res.data.ok) {
@@ -116,7 +116,7 @@ export default function BatchesHome() {
                                 {batch.name}
                               </div>
                               <div className="text-sm text-gray-500">
-                                Evento: {}
+                                Evento: {batch.event.name}
                               </div>
                             </div>
                           </div>
@@ -174,7 +174,7 @@ export default function BatchesHome() {
         }? Si la tanda es eliminada, los usuarios que adquirieron sus tickets en ésta no podrán ingresar al evento.`}
         btnAccept="Eliminar tanda"
         btnCancel="Cancelar"
-        onClickAccept={() => deleteUser(activeBatches._id)}
+        onClickAccept={() => deleteBatches(activeBatches._id)}
       />
     </>
   );
