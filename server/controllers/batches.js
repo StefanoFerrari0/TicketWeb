@@ -58,6 +58,31 @@ module.exports = {
     }
   },
 
+  getBatchByEvent: async (req, res, next) => {
+    console.log("getBatchByEvent");
+    try {
+      const eventId = req.params.eventId;
+      const batch = await BatchService.getByEvent(eventId);
+
+      if (!batch) {
+        const error = new createHttpError.BadRequest("No se encontró la relacion de la tanda con el evento.");
+        return next(error);
+      }
+
+      res.status(200).json({
+        ok: true,
+        data: batch,
+      });
+    } catch (error) {
+      const httpError = createHttpError(500, error, {
+				headers: {
+					"X-Custom-Header": "Value",
+				}
+			});
+      next(httpError);
+    }
+  },
+  
   getAllBatches: async (req, res, next) => {
     console.log("getAllBatches");
     try {
@@ -130,31 +155,6 @@ module.exports = {
 
       res.status(200).json({
         ok: true,
-      });
-    } catch (error) {
-      const httpError = createHttpError(500, error, {
-				headers: {
-					"X-Custom-Header": "Value",
-				}
-			});
-      next(httpError);
-    }
-  },
-
-  getBatchByEvent: async (req, res, next) => {
-    console.log("getBatchByEvent");
-    try {
-      const eventId = req.params.eventId;
-      const batch = await BatchService.getByEvent(eventId);
-
-      if (!batch) {
-        const error = new createHttpError.BadRequest("No se encontró la relacion de la tanda con el evento.");
-        return next(error);
-      }
-
-      res.status(200).json({
-        ok: true,
-        data: batch,
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {

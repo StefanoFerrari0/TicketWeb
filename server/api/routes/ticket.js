@@ -13,10 +13,10 @@ router.get("/:ticketId", TicketController.getTicketById );
 router.get("/", Middleware.isRole('admin'), TicketController.getAllTickets);
 
 //GetByUser
-router.get("/get-by-user/:userId", Middleware.isRole("admin"),TicketController.getUserTicket);
+router.get("/get-by-user/:userId", TicketController.getUserTicket);
 
 //Edit
-router.put("/edit/:ticketId", TicketController.editTicket);
+router.put("/edit/:ticketId", Middleware.isRole('admin'), TicketController.editTicket);
 
 //sendQrCodeByEmail
 router.post("/send-qr-code/:ticketId", TicketController.sendQrCodeByEmail);

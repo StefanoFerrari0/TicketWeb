@@ -44,6 +44,7 @@ module.exports = {
       res.status(201).json({
         ok: true,
         data: {
+          _id: user._id,
           email: user.email,
           name: user.name,
           roles: user.roles,
@@ -103,6 +104,7 @@ module.exports = {
       res.status(201).json({
         ok: true,
         data: {
+          _id: userLogged._id,
           email: userLogged.email,
           name: userLogged.name,
           surname: userLogged.surname,

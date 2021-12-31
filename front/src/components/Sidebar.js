@@ -12,48 +12,43 @@ import {
 } from "@heroicons/react/outline";
 import { UserContext } from "../hooks/UserContext";
 import AndLogo from "../images/Logo.png";
+import { NavLink } from "react-router-dom";
 
 const navigation = [
   {
     name: "Dashboard",
     href: "/",
     icon: HomeIcon,
-    current: false,
     role: ["QR", "RRPP", "admin"],
   },
   {
     name: "Entradas",
-    href: "/entradas",
+    href: "/entradas/crear",
     icon: TicketIcon,
-    current: false,
     role: ["RRPP", "admin"],
   },
   {
     name: "Eventos",
     href: "/eventos",
     icon: MusicNoteIcon,
-    current: false,
     role: ["admin"],
   },
   {
     name: "Tandas",
     href: "/tandas",
     icon: ClipboardListIcon,
-    current: false,
     role: ["admin"],
   },
   {
     name: "Usuarios",
     href: "/usuarios",
     icon: UsersIcon,
-    current: false,
     role: ["admin"],
   },
   {
     name: "Código QR",
     href: "/codigo-qr",
     icon: QrcodeIcon,
-    current: false,
     role: ["QR", "admin"],
   },
 ];
@@ -64,8 +59,6 @@ function classNames(...classes) {
 
 export default function Sidebar(props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, isLoading } = useContext(UserContext);
-
   return (
     <>
       <div>
@@ -129,30 +122,32 @@ export default function Sidebar(props) {
                   </div>
                   <nav className="mt-5 px-2 space-y-1">
                     {navigation.map((item) => {
+                      var isActive = false;
                       if (item.name === props.nav) {
-                        item.current = true;
+                        isActive = true;
                       }
 
-                      const userRole = props.user.roles[0].name;
+                      const userRole = props.user.roles.name;
                       const isRol = item.role.find(
                         (element) => element === userRole
                       );
 
                       return (
-                        <a
+                        <NavLink
                           key={item.name}
-                          href={item.href}
+                          to={item.href}
                           className={classNames(
-                            item.current
+                            isActive
                               ? "bg-gray-900 text-white"
                               : "text-gray-300 hover:bg-gray-700 hover:text-white",
                             !isRol ? "hidden" : "",
                             "group flex items-center px-2 py-2 text-base font-medium rounded-md"
                           )}
+                          onClick={() =>  setSidebarOpen(false)}
                         >
                           <item.icon
                             className={classNames(
-                              item.current
+                              isActive
                                 ? "text-gray-300"
                                 : "text-gray-400 group-hover:text-gray-300",
                               !isRol ? "hidden" : "",
@@ -161,7 +156,7 @@ export default function Sidebar(props) {
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </NavLink>
                       );
                     })}
                   </nav>
@@ -174,7 +169,7 @@ export default function Sidebar(props) {
                     <div className="flex items-center">
                       <div className="ml-3">
                         <p className="text-base font-medium text-white">
-                          {props.user.name} {props.user.surname}
+                        {props.user.name + " " + props.user.surname}
                         </p>
                         <p className="text-sm font-medium text-gray-400 group-hover:text-gray-300">
                           Configurar usuario
@@ -205,22 +200,23 @@ export default function Sidebar(props) {
               </div>
               <nav className="mt-5 flex-1 px-2 space-y-1">
                 {navigation.map((item) => {
-                  if (item.name === props.nav) {
-                    item.current = true;
-                  }
+                var isActive = false;
+                if (item.name === props.nav) {
+                  isActive = true;
+                }
 
-                  const userRole = props.user.roles[0].name;
+                  const userRole = props.user.roles.name;
 
                   const isRol = item.role.find(
                     (element) => element === userRole
                   );
 
                   return (
-                    <a
+                    <NavLink
                       key={item.name}
-                      href={item.href}
+                      to={item.href}
                       className={classNames(
-                        item.current
+                        isActive
                           ? "bg-gray-900 text-white"
                           : "text-gray-300 hover:bg-gray-700 hover:text-white",
                         !isRol ? "hidden" : "",
@@ -229,7 +225,7 @@ export default function Sidebar(props) {
                     >
                       <item.icon
                         className={classNames(
-                          item.current
+                          isActive
                             ? "text-gray-300"
                             : "text-gray-400 group-hover:text-gray-300",
                           !isRol ? "hidden" : "",
@@ -238,7 +234,7 @@ export default function Sidebar(props) {
                         aria-hidden="true"
                       />
                       {item.name}
-                    </a>
+                    </NavLink>
                   );
                 })}
               </nav>
@@ -248,7 +244,7 @@ export default function Sidebar(props) {
                 <div className="flex items-center">
                   <div className="ml-3">
                     <p className="text-sm font-medium text-white">
-                      {props.user.name} {props.user.surname}
+                    {props.user.name + " " + props.user.surname}
                     </p>
                     <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
                       Configurar usuario

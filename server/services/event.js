@@ -12,7 +12,6 @@ module.exports = {
       location,
       active,
       isDelete: false,
-      
     });
     //falta validar el no crear evento con una fecha menor a la actual
     await event.save();
@@ -39,8 +38,7 @@ module.exports = {
     const event = await Event.findOne({
       name,
       isDelete: false,
-      
-    }).populate("Event");
+    })
 
     return event;
   },

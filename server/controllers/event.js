@@ -129,23 +129,24 @@ module.exports = {
       const eventId = req.params.eventId;
       
       if (!eventId) {
-        const error = new createHttpError.BadRequest("No se modifico el evento.");
+        const error = new createHttpError.BadRequest("No se encontró el evento.");
         return next(error);
       }
       
-      const data ={
+      const data = {
         name,
         date,
         location,
         active
       };
-      const event = await EventService.edit(eventId,data);
+      const event = await EventService.edit(eventId, data);
       if(!event){
         const error = new createHttpError.BadRequest("No se modifico la evento.");
         return next(error);
       }
       res.status(201).json({ 
-        ok: true, 
+        ok: true,
+        date: date,
       });
     } catch (error) {
       const httpError = createHttpError(500, error, {

@@ -16,12 +16,12 @@ const eventSchema = new mongoose.Schema({
 
   location: {
     type: String,
-    required: true
+    //required: true,
   },
 
   active: {
     type: Boolean,
-    required: true 
+    //required: true, 
   },
 
   isDelete: {

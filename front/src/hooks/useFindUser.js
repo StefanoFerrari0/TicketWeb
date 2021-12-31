@@ -12,13 +12,8 @@ export default function useFindUser() {
         await AuthService.verifyToken()
           .then(res => {  
             if(res.data.ok){
-
-              res.data.data.roles.map((role) => {
-                delete role.__v
-                delete role._id;
-                delete role.isDelete;
-                return;
-              })
+              delete res.data.data.roles.__v
+              delete res.data.data.roles.isDelete              
               setUser(res.data.data);
               setLoading(false);
             } else{
@@ -36,7 +31,8 @@ export default function useFindUser() {
 
   return {
     user,
+    setUser,
     isLoading,
-    setUser
+    setLoading
   };
 }

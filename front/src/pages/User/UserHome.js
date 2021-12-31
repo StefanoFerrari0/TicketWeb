@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../components/Modal";
 import UserService from "../../api/services/user.service";
+import { Link } from "react-router-dom";
 
 export default function UserHome() {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,15 +64,14 @@ export default function UserHome() {
 
   return (
     <>
-    <div className="max-w-8xl h-full sm:h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div className="max-w-8xl h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
         <div className="flex justify-end py-10">
-          <button
-            type="button"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            <a href={`/usuarios/crear/`} className="">
+          <button type="button">
+            <Link to={`/usuarios/crear/`}      
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
               Crear usuario
-            </a>
+            </Link>
           </button>
         </div>
         <div className="flex flex-col">
@@ -117,23 +117,20 @@ export default function UserHome() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {user.roles.length > 0
-                            ? user.roles.map((element) => {
-                                return element.name;
-                              })
+                          {user.roles
+                            ? user.roles.name
                             : "No tiene rol"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
+                        <td className="px-6 py-8 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
                           <button
                             type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                           >
-                            <a
-                              href={`/usuarios/editar/${user._id}`}
-                              className=""
-                            >
+                            <Link
+                              to={`/usuarios/editar/${user._id}`}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                              >
                               Editar
-                            </a>
+                            </Link>
                           </button>
                           <button
                             type="button"
@@ -154,6 +151,16 @@ export default function UserHome() {
                             }}
                           >
                             Reestablecer contraseña
+                          </button>
+                          <button
+                            type="button"
+                          >
+                            <Link
+                              to={`/usuarios/entradas/${user._id}`}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                              >
+                              Ver entradas
+                            </Link>
                           </button>
                         </td>
                       </tr>

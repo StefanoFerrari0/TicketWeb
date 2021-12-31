@@ -8,27 +8,32 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    
     password: {
       type: String,
       required: true,
     },
+
     name: {
       type: String,
       required: true,
     },
+
     surname: {
       type: String,
       required: true,
     },
+
     accessToken: {
       type: String,
     },
-    roles: 
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Role",
-      },
-    
+
+    roles: {
+      type: mongoose.Types.ObjectId,
+      ref: "Role",
+      required: true,
+    },
+
     isDelete: {
       type: Boolean,
       default: false,

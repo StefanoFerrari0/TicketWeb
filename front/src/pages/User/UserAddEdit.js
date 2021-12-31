@@ -94,7 +94,7 @@ function UserAddEdit({ history, match }) {
       UserService.getById(id).then((res) => {
         if (res.data.ok) {
           const fields = ["email", "name", "surname", "roles"];
-          const { _id } = res.data.data.roles[0];
+          const { _id } = res.data.data.roles;
           fields.forEach((field) => {
             formik.setFieldValue(field, res.data.data[field], false);
 
@@ -110,7 +110,7 @@ function UserAddEdit({ history, match }) {
   }, []);
 
   return (
-    <div className="max-w-8xl h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div className="max-w-8xl min-h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
       <form
         className="space-y-8 divide-y divide-gray-200"
         onSubmit={formik.handleSubmit}
