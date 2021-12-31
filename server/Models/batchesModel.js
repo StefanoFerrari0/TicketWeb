@@ -37,7 +37,6 @@ const batchesSchema = new mongoose.Schema({
   event:{
     type: mongoose.Types.ObjectId,
     ref: "Event",
-    required: true,
   },
   
 });

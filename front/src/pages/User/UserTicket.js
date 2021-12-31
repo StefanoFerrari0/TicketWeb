@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import Modal from "../components/Modal";
-import TicketService from "../api/services/ticket.service";
+import Modal from "../../components/Modal";
+import Stats from "../../components/Stats";
+import TicketService from "../../api/services/ticket.service";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { UserContext } from "../hooks/UserContext";
-import Stats from "../components/Stats";
+import { UserContext } from "../../hooks/UserContext";
 
-export default function Home(props) {
+export default function Home({match}) {
+  const { id } = match.params;
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [data, setData] = useState([]);
@@ -18,14 +19,13 @@ export default function Home(props) {
     const fetchData = async () => {
       setIsError(false);
       setIsLoading(true);
-      getAllTickets(props.user);
+      getAllTickets(id);
     };
     fetchData();
   }, []);
 
-  const getAllTickets = async (user) => {
-    if (user.roles.name === "admin") {
-      await TicketService.getAll()
+  const getAllTickets = async (userId) => {
+      await TicketService.getByUser(userId)
         .then((res) => {
           if (res.data.ok) {
             setData(res.data.data);
@@ -36,19 +36,7 @@ export default function Home(props) {
         .catch((error) => {
           setIsError(true);
         });
-    } else {
-      await TicketService.getByUser(user._id)
-        .then((res) => {
-          if (res.data.ok) {
-            setData(res.data.data);
-            console.log(res.data.data);
-            setIsLoading(false);
-          }
-        })
-        .catch((error) => {
-          setIsError(true);
-        });
-    }
+    
   };
 
   const deleteTicket = async (ticketId) => {
@@ -113,56 +101,20 @@ export default function Home(props) {
     <>
       <div className="max-w-8xl min-h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
         <div className="flex flex-col">
-          {props.user.roles.name !== "admin" ? (
-            <Stats
-              stats={[
-                {
-                  name: "Entradas vendidas:",
-                  stat: data.length,
-                },
-                {
-                  name: "Entradas restantes por cobrar: ",
-                  stat: data.filter((value) => !value.isPay).length,
-                  moreInfo: `Total: $${
-                    data.filter((value) => !value.isPay).length * 100
-                  }`,
-                },
-                {
-                  name: "Entradas cobradas: ",
-                  stat: data.filter((value) => value.isPay).length,
-                  moreInfo: `Total: $${
-                    data.filter((value) => value.isPay).length * 100
-                  }`,
-                },
-              ]}
-            />
-          ) : (
-            <Stats
-              stats={[
-                {
-                  name: "Total entradas vendidas:",
-                  stat: data.length,
-                  moreInfo: `Total: $${data.reduce(function (total, currentValue) {
-                    return total + currentValue.batches.price
-                  }, 0)}`,
-                },
-                {
-                  name: "Entradas restantes por pagar: ",
-                  stat: data.filter((value) => !value.isPay).length,
-                  moreInfo: `Total a gastar: $${
-                    data.filter((value) => !value.isPay).length * 100
-                  }`,
-                },
-                {
-                  name: "Entradas pagadas: ",
-                  stat: data.filter((value) => value.isPay).length,
-                  moreInfo: `Total gastado: $${
-                    data.filter((value) => value.isPay).length * 100
-                  }`,
-                },
-              ]}
-            />
-          )}
+        <Stats stats={[ {
+                name: "Entradas vendidas:", 
+                stat: data.length,
+            }, {
+                name: "Entradas restantes por cobrar: ",
+                stat:  data.filter((value) => !value.isPay).length,
+                moreInfo: `Total: $${data.filter((value) => !value.isPay).length * 100}`
+            } , {
+                name: "Entradas cobradas: ",
+                stat:  data.filter((value) => value.isPay).length,
+                moreInfo: `Total: $${data.filter((value) => value.isPay).length * 100}`
+            }
+        ]}/>
+
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
               <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -260,8 +212,7 @@ export default function Home(props) {
                           ${ticket.batches.price}
                         </td>
                         <td className="px-6 py-8 whitespace-nowrap text-right text-sm font-medium flex justify-evenly gap-6">
-                          {props.user && props.user.roles.name === "admin" && (
-                            <>
+    
                               <button type="button">
                                 <Link
                                   to={`/entradas/editar/${ticket._id}`}
@@ -284,9 +235,7 @@ export default function Home(props) {
                                 {ticket.isPay
                                   ? "Cambiar a no pagado"
                                   : "Cambiar a pagado"}
-                              </button>
-                            </>
-                          )}
+                              </button>                          
 
                           <button
                             type="button"

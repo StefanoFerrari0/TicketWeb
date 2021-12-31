@@ -13,7 +13,6 @@ export default function useFindUser() {
           .then(res => {  
             if(res.data.ok){
               delete res.data.data.roles.__v
-              delete res.data.data.roles._id
               delete res.data.data.roles.isDelete              
               setUser(res.data.data);
               setLoading(false);
@@ -32,8 +31,8 @@ export default function useFindUser() {
 
   return {
     user,
-    isLoading,
     setUser,
+    isLoading,
     setLoading
   };
 }

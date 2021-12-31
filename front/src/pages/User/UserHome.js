@@ -66,11 +66,10 @@ export default function UserHome() {
     <>
     <div className="max-w-8xl h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
         <div className="flex justify-end py-10">
-          <button
-            type="button"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            <Link to={`/usuarios/crear/`} className="">
+          <button type="button">
+            <Link to={`/usuarios/crear/`}      
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
               Crear usuario
             </Link>
           </button>
@@ -122,15 +121,14 @@ export default function UserHome() {
                             ? user.roles.name
                             : "No tiene rol"}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
+                        <td className="px-6 py-8 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
                           <button
                             type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                           >
                             <Link
                               to={`/usuarios/editar/${user._id}`}
-                              className=""
-                            >
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                              >
                               Editar
                             </Link>
                           </button>
@@ -153,6 +151,16 @@ export default function UserHome() {
                             }}
                           >
                             Reestablecer contraseña
+                          </button>
+                          <button
+                            type="button"
+                          >
+                            <Link
+                              to={`/usuarios/entradas/${user._id}`}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                              >
+                              Ver entradas
+                            </Link>
                           </button>
                         </td>
                       </tr>

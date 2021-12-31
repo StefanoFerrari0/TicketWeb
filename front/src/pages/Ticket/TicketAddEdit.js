@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useFormik } from "formik";
-import TicketService from "../../api/services/user.service";
+import TicketService from "../../api/services/ticket.service";
 import EventService from "../../api/services/event.service";
 import BatchesService from "../../api/services/batches.service";
 import moment from "moment";
@@ -26,11 +26,19 @@ const validate = (values) => {
   }
 
   if(!values.phone) {
-    errors.surname = "Requerido.";
+    errors.phone = "Requerido.";
   } if (values.phone.length > 10){
     errors.phone = "El número del teléfono no puede ser mayor a 10 cáracteres";
   } else if (!/^\d+$/.test(values.phone)) {
     errors.phone = "Teléfono inválido.";
+  }
+
+  if (!values.dni) {
+    errors.dni = "Requerido";
+  } if(values.dni.length < 7 || values.dni.length > 8) {
+    errors.dni = "El dni es inválido.";
+  } else if (!/^\d+$/.test(values.dni)){
+    errors.dni = "El dni es inválido.";
   }
 
   if (!values.event) {
@@ -50,6 +58,7 @@ const validate = (values) => {
 function TicketAddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;
+
   const [ticket, setTicket] = useState(null);
   const [ticketError, setTicketError] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
@@ -70,6 +79,7 @@ function TicketAddEdit({ history, match }) {
     validate,
 
     onSubmit: ({ email, name, surname, phone, dni, event, batches, quantity, setFieldValue }) => {
+
       const data = {
         email,
         name,
@@ -77,22 +87,25 @@ function TicketAddEdit({ history, match }) {
         phone,
         dni, 
         event,
-        batches
+        batches,
       };
 
-      if (isAddMode) {
-        createTicket(data);
+      if(isAddMode) {
+        data.quantity = quantity;
+        for(let index = 0; index < quantity; index++) {
+          createTicket(data);
+        }
       } else {
         updateTicket(id, data);
       }
-    },
+      }
   });
 
   function createTicket(data) {
     TicketService.create(data)
       .then(() => {
         console.log("El ticket fue creado.");
-        history.push("/entradas");
+        history.push("/");
       })
       .catch((error) => {
         if (error.response) {
@@ -146,7 +159,7 @@ function TicketAddEdit({ history, match }) {
             formik.setFieldValue(field, res.data.data[field], false);
 
             if (field === "event") {
-              formik.setFieldValue(field, res.data.data.event._id, false);
+              formik.setFieldValue(field, res.data.data.batches.event._id, false);
             }
 
             if (field === "batches") {
@@ -155,13 +168,14 @@ function TicketAddEdit({ history, match }) {
           });
 
           setTicket(res.data.data);
+          getAllBatchesByEvent(res.data.data.batches.event._id);
         }
       });
     }
   }, []);
 
   return (
-    <div className="max-w-8xl h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div className="max-w-8xl min-h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
       <form
         className="space-y-8 divide-y divide-gray-200"
         onSubmit={formik.handleSubmit}
@@ -287,6 +301,32 @@ function TicketAddEdit({ history, match }) {
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label
+                  htmlFor="dni"
+                  className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                >
+                  DNI
+                  {formik.touched.dni && formik.errors.dni ? (
+                    <span className="mx-2 text-red-600">
+                      ×{formik.errors.dni}
+                    </span>
+                  ) : null}
+                </label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    id="dni"
+                    name="dni"
+                    type="text"
+                    required
+                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.dni}
+                  />
+                </div>
+              </div>
+
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                <label
                   htmlFor="event"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
@@ -365,12 +405,13 @@ function TicketAddEdit({ history, match }) {
                 </div>
               </div>
               
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+              {isAddMode && 
+              <div className={`sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5`}>
                 <label
                   htmlFor="quantity"
                   className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                 >
-                  Cantidad de entradas a vender ({activeBatches && activeBatches.quantity ? "Stock: " + activeBatches.quantity : "Stock ilimitado"})
+                  Cantidad de entradas a vender {activeBatches && activeBatches.quantity === 0 ? "(La tanda elegida no tiene Stock)" : ""}{activeBatches && activeBatches.quantity > 0 ? `(Stock: ${activeBatches.quantity})` : ""}
                   {formik.touched.quantity && formik.errors.quantity ? (
                     <span className="mx-2 text-red-600">
                       ×{formik.errors.quantity}
@@ -385,13 +426,15 @@ function TicketAddEdit({ history, match }) {
                     required
                     min={1}
                     max={activeBatches && activeBatches.quantity ? activeBatches.quantity : 9999}
-                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    disabled={activeBatches &&  activeBatches.quantity === 0 ? true : false}
+                    className={`${activeBatches.quantity <= 0 ? "bg-gray-400" : ""} block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md`}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.quantity}
                   />
                 </div>
-              </div>
+              </div>}
+
             </div>
           </div>
         </div>

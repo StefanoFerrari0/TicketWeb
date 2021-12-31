@@ -52,13 +52,11 @@ const ticketSchema = new mongoose.Schema(
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      required: true,
     },
 
     batches: {
       type: mongoose.Types.ObjectId,
       ref: "Batches",
-      required: true,
     },
 
     isDelete: {

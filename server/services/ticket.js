@@ -11,6 +11,7 @@ module.exports = {
     name,
     surname,
     dni,
+    state,
     user,
     batches
   ) => {
@@ -28,7 +29,6 @@ module.exports = {
       user,
       batches,
       isDeleted: false,
-
     });
 
     await newTicket.save();
@@ -82,7 +82,20 @@ module.exports = {
   },
 
   getAllTicketsSelled: async (userId) => {
-    const ticket = await Ticket.find({ user: userId, isDelete: false });
+    const ticket = await Ticket.find({ user: userId, isDelete: false })
+      .populate({
+        path: "user",
+        model: "User",
+      })
+      .populate({
+        path: "batches",
+        model: "Batches",
+        populate: {
+          path: "event",
+          model: "Event",
+        },
+      })
+      .exec();
     return ticket;
   },
 };

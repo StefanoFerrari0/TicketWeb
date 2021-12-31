@@ -21,8 +21,6 @@ module.exports = {
       }));
 
       transporter.use('compile', inlineBase64());
-
-      let html = `<img height="400" width="400" src="${message}"/>`;
       
 
       let info = await transporter.sendMail({
@@ -30,7 +28,7 @@ module.exports = {
         to: email, 
         subject: subject, //"Compraste una entrada para las 10hs de Techno",
         // text: "...?", 
-        message, 
+        html: message, 
       });
 
  
@@ -40,7 +38,7 @@ module.exports = {
   templateService: async(id, data)=>{
     switch (id) {
       case 1:
-              
+           return  `<img height="400" width="400" src="${data}"/>`   
         break;
       
       case 2:
@@ -57,12 +55,12 @@ module.exports = {
     }
   },
 
-  createQr: async (data)=>{
-    const id = toString(data.ticketId)
+  createQr: async (id, dni, name, surname)=>{
+    const data = {id, dni, name, surname}
     
-    data.ticketId = crypt.encrypt(id);
+   // NO ANDA. const encriptData = crypt.encrypt(id);
     
-    let stringQrCode = JSON.stringify(data);
+    let stringQrCode = JSON.stringify(id);
     return await QRCode.toDataURL(stringQrCode);
   },
 };

@@ -13,12 +13,16 @@ class TicketService {
     return http.get(`/ticket/`);
   }
 
-  getByUser(ticketId) {
-    return http.get(`/ticket/get-by-user/${ticketId}`);
+  getByUser(userId) {
+    return http.get(`/ticket/get-by-user/${userId}`);
   }
 
   edit(ticketId, data) {
     return http.put(`/ticket/edit/${ticketId}`, data);
+  }
+
+  sendQrCodeByEmail(ticketId) {
+    return http.post(`/ticket/send-qr-code/${ticketId}`);
   }
 
   delete(ticketId) {

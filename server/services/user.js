@@ -67,6 +67,7 @@ module.exports = {
     const user = await User.findByIdAndUpdate(userId, { isDelete: true });
     return user;
   },
+  
   checkAuth: async (userLogged, userId) =>{
     const isAdmin = userLogged.roles.name === 'admin' ? true : false
     

@@ -110,7 +110,7 @@ function UserAddEdit({ history, match }) {
   }, []);
 
   return (
-    <div className="max-w-8xl h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div className="max-w-8xl min-h-screen bg-gray-100 mx-auto px-4 sm:px-6 md:px-8 py-6">
       <form
         className="space-y-8 divide-y divide-gray-200"
         onSubmit={formik.handleSubmit}

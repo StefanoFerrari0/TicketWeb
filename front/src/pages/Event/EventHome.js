@@ -51,11 +51,10 @@ export default function EventHome() {
     <>
     <div className="max-w-8xl h-screen bg-gray-900 mx-auto px-4 sm:px-6 md:px-8 py-6">
         <div className="flex justify-end py-10">
-          <button
-            type="button"
+          <button type="button">
+            <Link to={`/eventos/crear/`} 
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          >
-            <Link to={`/eventos/crear/`} className="">
+            >
               Crear evento
             </Link>
           </button>
@@ -102,14 +101,11 @@ export default function EventHome() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {moment.utc(event.date).format("DD/MM/YYYY")}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
-                          <button
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                          >
+                        <td className="px-6 py-8 whitespace-nowrap text-right text-sm font-medium flex justify-evenly">
+                          <button type="button">
                             <Link
                               to={`/eventos/editar/${event._id}`}
-                              className=""
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
                               Editar
                             </Link>
