@@ -28,6 +28,12 @@ module.exports = {
         const error = new createHttpError.BadRequest("No quedan más tandas para el evento.");
         return next(error);
       }
+      const date = await BatchService.validateDate(buyDate,batches);
+
+      if(!date){
+        const error = new createHttpError.BadRequest("No se puede vender una entrada para esta tanda, ya que no cumple con la fechas establecidas");
+        return next(error);
+      }
 
       const lastUserEdit = req.userLogged;
 

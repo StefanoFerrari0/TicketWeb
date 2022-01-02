@@ -30,7 +30,6 @@ module.exports = {
         const { id, exp } = jwt.verify(accessToken, TOKEN_SECRET);
 
         const userLogged = await UserService.getById(id);
-        console.log(userLogged);
         if (!userLogged) {
           next(new Error(`Usuario no encontrado.`));
         }
