@@ -39,18 +39,18 @@ module.exports = {
         return next(error);
       }
       
+      const date = await BatchService.validateDate(ticket.buyDate, batches);
+
+      if(!date){
+        const error = new createHttpError.BadRequest("No se puede vender una entrada para esta tanda, ya que no cumple con la fechas establecidas");
+        return next(error);
+      }
+	    
       const batchQuantity = await BatchService.subtractQuantity(batches);
 
       if (!batchQuantity)
       {
         const error = new createHttpError.BadRequest("No quedan más entradas para esta tanda.");
-        return next(error);
-      }
-
-      const date = await BatchService.validateDate(buyDate,batches);
-
-      if(!date){
-        const error = new createHttpError.BadRequest("No se puede vender una entrada para esta tanda, ya que no cumple con la fechas establecidas");
         return next(error);
       }
 
