@@ -74,14 +74,12 @@ module.exports = {
 
   validateDate: async (buyDate, batchId )=>{ 
     const batches = await Batch.findById(batchId);
-    const x = new Date(buyDate);
+    const actualDate = new Date(buyDate);
     
-    if(x >= batches.dateFrom)
-    {
-      if(x <= batches.dateTo){
+    if(actualDate >= batches.dateFrom && actualDate <= batches.dateTo){
         return true;
-      } 
     }
+    
     return false;
   },
 };
