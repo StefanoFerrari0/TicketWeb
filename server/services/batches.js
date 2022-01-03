@@ -71,4 +71,15 @@ module.exports = {
     });
     return addedBatch;
   },
+
+  validateDate: async (buyDate, batchId )=>{ 
+    const batches = await Batch.findById(batchId);
+    const actualDate = new Date(buyDate);
+    
+    if(actualDate >= batches.dateFrom && actualDate <= batches.dateTo){
+        return true;
+    }
+    
+    return false;
+  },
 };
